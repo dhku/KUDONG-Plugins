@@ -1,0 +1,8 @@
+name: ${artifactId}
+version: ${version}
+author: dhku10@gmail.com
+description: ${description}
+api-version: ${bukkit-api.version}
+main: kr.kudong.entity.RidingCore
+commands:
+    ride:

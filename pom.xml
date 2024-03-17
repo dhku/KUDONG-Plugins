@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>kr.kudong</groupId>
+	<artifactId>parent</artifactId>
+	<packaging>pom</packaging>
+	<version>1.0-SNAPSHOT</version>
+
+	<properties>
+
+		<!-- 기본설정 -->
+		<encoding>UTF-8</encoding>
+		<java.version>17</java.version>
+		<skipTests>true</skipTests>
+
+		<!-- 빌드 플러그인 버전 -->
+		<maven-shade.version>3.2.4</maven-shade.version>
+		<maven-compiler.version>3.8.1</maven-compiler.version>
+		<maven-resources.version>3.2.0</maven-resources.version>
+
+		<!-- 공통 라이브러리 버전 -->
+		<junit.version>4.12</junit.version>
+		<mockito.version>1.10.19</mockito.version>
+		<junit-jupiter.version>5.5.2</junit-jupiter.version>
+		<gson.version>2.7</gson.version>
+		<snakeyaml.version>1.26</snakeyaml.version>
+		<netty.version>4.1.45.Final</netty.version>
+		<lombok.version>1.18.24</lombok.version>
+		<hibernate.version>5.4.21.Final</hibernate.version>
+		<log4j.version>2.13.3</log4j.version>
+		<reflections.version>0.9.11</reflections.version>
+		<protocolLib.version>4.5.1</protocolLib.version>
+		<postgresql.version>42.2.18</postgresql.version>
+
+		<!-- 버킷 버전 -->    
+		<paper.version>1.16.1-R0.1-SNAPSHOT</paper.version>
+		<bukkit-api.version>1.20</bukkit-api.version>
+		<worldedit.version>7.1.0-SNAPSHOT</worldedit.version>
+		<dynmap.version>3.0-beta-10-spigot</dynmap.version>
+		<luckperm.version>5.1</luckperm.version>
+		<!-- <essentialsX.version>2.18.0</essentialsX.version> --> 
+	</properties>
+
+	<modules>
+		<module>kudong-entity-riding</module>
+	</modules>
+
+
+	<repositories>
+		<repository>
+			<id>minecraft-libraries</id>
+			<name>Minecraft Libraries</name>
+			<url>https://libraries.minecraft.net</url>
+		</repository>
+
+		<repository>
+			<id>bungeecord-repo</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</repository>
+		<repository>
+			<id>papermc</id>
+			<url>https://papermc.io/repo/repository/maven-public/</url>
+		</repository>
+	</repositories> 
+
+	<dependencies>
+		<dependency>
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>${snakeyaml.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>${gson.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-resources-plugin</artifactId>
+			<version>${maven-resources.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>copy-artifact</id>
+						<phase>install</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<type>${project.packaging}</type>
+									<destFileName>${project.artifactId}.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<outputDirectory>${maven.multiModuleProjectDirectory}/target/</outputDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
