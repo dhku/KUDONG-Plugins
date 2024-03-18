@@ -6,3 +6,4 @@ api-version: ${bukkit-api.version}
 main: kr.kudong.entity.RidingCore
 commands:
     ride:
+      aliases: [탈것,xkfrjt]

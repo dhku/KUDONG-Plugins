@@ -37,7 +37,7 @@ public class RidingCore extends JavaPlugin
 		/**
 		 * 커맨드
 		 */
-		this.commandManager = new CommandManager(this.logger, this);
+		this.commandManager = new CommandManager(this.logger, this, this.ridingManager);
 		/**
 		 * 콘피그,이벤트 리스너 등록
 		 */

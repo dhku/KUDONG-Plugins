@@ -4,15 +4,23 @@ import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import org.bukkit.util.Vector;
 
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.data.RidingPlayerMap;
@@ -65,9 +73,15 @@ public class EntityRidingListener implements Listener
 	
 	public SteerableEntity createSteerableEntity(Player player, SteerablePreset preset)
 	{
-		Entity entity = player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
+		Location loc = player.getLocation();
+		
+		Entity entity = player.getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);	
+		ArmorStand armor = (ArmorStand)entity;
+		armor.setSmall(true);
+		armor.setVisible(false);
 		entity.addPassenger(player);
-		SteerableEntity e = new SteerableEntity(player,player.getVehicle(),preset);
+
+		SteerableEntity e = new SteerableEntity(player,entity,preset);
 		return e;
 	}
 	

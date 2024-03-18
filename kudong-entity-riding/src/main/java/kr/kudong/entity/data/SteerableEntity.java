@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.Vector;
 import lombok.Data;
 
@@ -30,6 +35,8 @@ public class SteerableEntity
 	private List<Location> entityOffset;
 	private Location entityCenter;
 	
+	private Entity _entity;
+	
 	public SteerableEntity(Player player, Entity entity, SteerablePreset preset)
 	{
 		this.player = player;
@@ -37,6 +44,18 @@ public class SteerableEntity
 		this.preset = preset;
 		this.velocity = 0.0;
 		this.entityOffset = new ArrayList<>();
+		
+		ArmorStand armor = (ArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
+		ItemStack item = new ItemStack(Material.DIAMOND_HOE);
+		ItemMeta meta = item.getItemMeta();
+		meta.setCustomModelData(5);
+		item.setItemMeta(meta);
+		
+		armor.setVisible(false);
+		armor.getEquipment().setHelmet(item);
+		
+		this._entity = armor;
+		
 	}
 	
 	public void initializeInertiaDir(Vector inertiaDirection)
@@ -48,17 +67,37 @@ public class SteerableEntity
 	public void updatePhysics(Player player ,KeyInputState state)
 	{
 		double height = this.checkGravity(state);
-		Entity e = player.getVehicle();
+		Entity e = entity;
 		float forward = state.getForward();
 		float sidewalks = state.getSidewalks();
-		boolean shift = state.isShift();
+		boolean isShift = state.isShift();
 		
 		if(forward > 0)
 		{
-			this.velocity += this.preset.ACCELERATION_RATE;
-			
-			if(this.velocity > this.preset.FORWARD_DEFAULT_MAXSPEED)
-				this.velocity = this.preset.FORWARD_DEFAULT_MAXSPEED;
+			if(isShift)
+			{
+				this.velocity += this.preset.ACCELERATION_RATE;
+				
+				if(this.velocity > this.preset.FORWARD_BOOST_MAXSPEED)
+					this.velocity = this.preset.FORWARD_BOOST_MAXSPEED;
+			}
+			else
+			{
+				if(this.velocity > this.preset.FORWARD_DEFAULT_MAXSPEED)
+				{
+					this.velocity += -this.preset.DECELERATION_RATE;
+					
+					if(this.velocity <= this.preset.FORWARD_DEFAULT_MAXSPEED)
+						this.velocity = this.preset.FORWARD_DEFAULT_MAXSPEED;
+				}
+				else
+				{
+					this.velocity += this.preset.ACCELERATION_RATE;
+					
+					if(this.velocity > this.preset.FORWARD_DEFAULT_MAXSPEED)
+						this.velocity = this.preset.FORWARD_DEFAULT_MAXSPEED;
+				}	
+			}
 		}
 		else if(forward < 0)
 		{
@@ -96,15 +135,21 @@ public class SteerableEntity
 		}
 		
 		this.updateGUI(player);
-
+		
 		this.currentVelocity = this.currentDirection.clone().multiply(this.velocity);
 		this.currentVelocity.setY(height);
+		
 		this.entity.setVelocity(this.currentVelocity);
+
+		Location l = entity.getLocation();
+		this._entity.teleport(l);
+
 	}
 	
 	public void destroyEntity()
 	{
 		this.entity.eject();
+		this._entity.remove();
 		this.entity.remove();
 	}
 	
