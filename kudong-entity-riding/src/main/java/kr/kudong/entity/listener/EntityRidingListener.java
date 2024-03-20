@@ -1,5 +1,6 @@
 package kr.kudong.entity.listener;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.vehicle.VehicleEntityCollisionEvent;
@@ -23,10 +25,12 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 
+import kr.kudong.entity.RidingCore;
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.data.RidingPlayerMap;
 import kr.kudong.entity.data.SteerableEntity;
 import kr.kudong.entity.data.SteerablePreset;
+import kr.kudong.entity.db.RidingService;
 
 public class EntityRidingListener implements Listener
 {
@@ -44,10 +48,25 @@ public class EntityRidingListener implements Listener
 	}
 	
 	@EventHandler
+	private void onPlayerJoin(PlayerJoinEvent event)
+	{
+		RidingService service = RidingCore.getDbService();
+		Player player = event.getPlayer();
+		UUID uuid = player.getUniqueId();
+		
+		List<SteerablePreset> purchased = service.selectRidingData(player);
+		this.map.setPlayerPurchasedList(uuid, purchased);
+		
+	}
+	
+	
+	@EventHandler
 	private void onPlayerQuit(PlayerQuitEvent event)
 	{
 		Player player = event.getPlayer();
+		UUID uuid = player.getUniqueId();
 		this.removeSteerableEntity(player);
+		this.map.removePurchasedData(uuid);
 	}
 	
 	//탈것 장착

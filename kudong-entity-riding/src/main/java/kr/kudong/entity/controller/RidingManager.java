@@ -1,6 +1,7 @@
 package kr.kudong.entity.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.bukkit.plugin.java.JavaPlugin;
@@ -27,6 +28,7 @@ public class RidingManager
 	private ProtocolManager protocolManager;
 	private RidingPlayerMap map;
 	private List<SteerablePreset> presetList;
+	private Map<String,SteerablePreset> presetMap;
 	private Economy econ;
 	
 	public RidingManager(Logger logger,JavaPlugin plugin,Economy econ)
@@ -47,6 +49,16 @@ public class RidingManager
 	
 	
 
+	public Map<String, SteerablePreset> getPresetMap()
+	{
+		return presetMap;
+	}
+
+	public void setPresetMap(Map<String, SteerablePreset> presetMap)
+	{
+		this.presetMap = presetMap;
+	}
+	
 	public Logger getLogger()
 	{
 		return logger;

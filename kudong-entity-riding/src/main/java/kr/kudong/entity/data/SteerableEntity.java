@@ -118,12 +118,18 @@ public class SteerableEntity
 		{
 			if(sidewalks < 0)
 			{
-				e.setRotation(e.getLocation().getYaw() + this.preset.SIDE_STEER_SENSIVITY , 0.0f);
+				if(forward >= 0)
+					e.setRotation(e.getLocation().getYaw() + this.preset.SIDE_STEER_SENSIVITY , 0.0f);
+				else 
+					e.setRotation(e.getLocation().getYaw() - this.preset.SIDE_STEER_SENSIVITY , 0.0f);
 				
 			}
 			else if(sidewalks > 0)
 			{
-				e.setRotation(e.getLocation().getYaw() - this.preset.SIDE_STEER_SENSIVITY , 0.0f);
+				if(forward >= 0)
+					e.setRotation(e.getLocation().getYaw() - this.preset.SIDE_STEER_SENSIVITY , 0.0f);
+				else
+					e.setRotation(e.getLocation().getYaw() + this.preset.SIDE_STEER_SENSIVITY , 0.0f);
 			}
 
 			Vector v2 = e.getLocation().getDirection().clone();

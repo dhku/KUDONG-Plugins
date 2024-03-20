@@ -17,9 +17,9 @@ public class RidingPlayerMap
 	private Logger logger;
 	private JavaPlugin plugin;
 	private RidingManager manager;
-	private Map<UUID,SteerableEntity> _entityMap;
-	private Map<UUID,KeyInputState> _keyInput;
-	private Map<UUID,Integer> _schedulerMap;
+	private Map<UUID,SteerableEntity> _entityMap; 
+	private Map<UUID,KeyInputState> _keyInput; 
+	private Map<UUID,Integer> _schedulerMap; 
 	
 	private Map<UUID,List<SteerablePreset>> _purchasedMap;//구매한 정보
 
@@ -34,6 +34,16 @@ public class RidingPlayerMap
 		this._schedulerMap = new HashMap<>();
 		this._purchasedMap = new HashMap<>();
 
+	}
+	
+	public void removePurchasedData(UUID uuid)
+	{
+		if(this._purchasedMap.containsKey(uuid))
+		{
+			List<SteerablePreset> p = this._purchasedMap.get(uuid);
+			p.clear();
+			this._purchasedMap.remove(uuid);
+		}
 	}
 	
 	public void registerRidingPlayerInput(UUID uuid)
@@ -109,6 +119,11 @@ public class RidingPlayerMap
 			p2.add(purchased);
 			this._purchasedMap.put(uuid, p2);
 		}
+	}
+	
+	public void setPlayerPurchasedList(UUID uuid, List<SteerablePreset> purchased)
+	{
+		this._purchasedMap.put(uuid, purchased);
 	}
 	
 	public boolean isExistPreset(UUID uuid, SteerablePreset purchased)

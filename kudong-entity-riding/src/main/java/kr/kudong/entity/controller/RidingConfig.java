@@ -41,6 +41,15 @@ public class RidingConfig implements ConfigurationMember
 			SteerablePreset[] list = gson.fromJson(raw, SteerablePreset[].class);
 			this.manager.setPresetList(Arrays.asList(list));
 			
+			Map<String,SteerablePreset> map = new HashMap<>();
+			
+			for(SteerablePreset p : list)
+			{
+				map.put(p.getPRESET_NAME(), p);
+			}
+			
+			this.manager.setPresetMap(map);
+			
 			this.logger.log(Level.INFO,"탈것 "+this.manager.getPresetList().size()+"개의 프리셋이 로드되었습니다.");
 			
 		} catch (Exception e)

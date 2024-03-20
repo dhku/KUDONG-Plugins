@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import kr.kudong.entity.RidingCore;
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.data.RidingPlayerMap;
 import kr.kudong.entity.data.SteerablePreset;
@@ -31,7 +32,6 @@ public class RidingShopGUI extends GUI
 	@Override
 	void init()
 	{
-		
 		this.list = this.manager.getPresetList();
 		
 		int count = 0;
@@ -93,13 +93,38 @@ public class RidingShopGUI extends GUI
         }
         else
         {
+        	
         	EconomyResponse r = econ.withdrawPlayer(player, preset.getPRICE());
         	
             if(r.transactionSuccess()) 
             {
-            	map.AddPreset(uuid, preset);
-            	player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7구매에 §e%s§7가 지불되었고 잔고 §e%s§7가 남았습니다.", econ.format(r.amount), econ.format(r.balance)));
-            	player.sendMessage("§7구매하신 상품은 §b차고§7에서 이용 가능합니다.");
+             	RidingCore.getDbService().asyncInsertRidingData(player, preset, (isSuccess)->
+            	{
+            		if(isSuccess)
+            		{
+            			map.AddPreset(uuid, preset);
+            			
+            			Bukkit.getScheduler().runTask(plugin, ()->{
+            				
+            				player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7구매에 §e%s§7가 지불되었고 잔고 §e%s§7가 남았습니다.", econ.format(r.amount), econ.format(r.balance)));
+                        	player.sendMessage("§7구매하신 상품은 §b차고§7에서 이용 가능합니다.");
+            				
+            			});
+                      	
+            		}
+            		else
+            		{
+            			Bukkit.getScheduler().runTask(plugin, ()->{
+            				
+            				player.sendMessage("§7거래 오류가 발생하였습니다.");
+            				econ.depositPlayer(player, preset.getPRICE());
+            				
+            			});
+            			
+            		}
+
+            	});
+
             } else {
             	player.sendMessage(String.format("거래 오류가 발생하였습니다. 에러: %s", r.errorMessage));
             }
