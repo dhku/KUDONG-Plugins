@@ -1,6 +1,8 @@
 package kr.kudong.entity.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -19,6 +21,9 @@ public class RidingPlayerMap
 	private Map<UUID,KeyInputState> _keyInput;
 	private Map<UUID,Integer> _schedulerMap;
 	
+	private Map<UUID,List<SteerablePreset>> _purchasedMap;//구매한 정보
+
+	
 	public RidingPlayerMap(Logger logger,JavaPlugin plugin,RidingManager manager)
 	{
 		this.logger = logger;
@@ -27,6 +32,8 @@ public class RidingPlayerMap
 		this._entityMap = new HashMap<>();
 		this._keyInput = new HashMap<>();
 		this._schedulerMap = new HashMap<>();
+		this._purchasedMap = new HashMap<>();
+
 	}
 	
 	public void registerRidingPlayerInput(UUID uuid)
@@ -88,5 +95,49 @@ public class RidingPlayerMap
 	{
 		return this._schedulerMap.containsKey(uuid);
 	}
+	
+	public void AddPreset(UUID uuid, SteerablePreset purchased)
+	{
+		if(this._purchasedMap.containsKey(uuid))
+		{
+			List<SteerablePreset> p = this._purchasedMap.get(uuid);
+			p.add(purchased);
+		}
+		else
+		{
+			List<SteerablePreset> p2 = new ArrayList<>();
+			p2.add(purchased);
+			this._purchasedMap.put(uuid, p2);
+		}
+	}
+	
+	public boolean isExistPreset(UUID uuid, SteerablePreset purchased)
+	{
+		if(this._purchasedMap.containsKey(uuid))
+		{
+			List<SteerablePreset> list = this._purchasedMap.get(uuid);
+			
+			for(SteerablePreset p : list)
+			{
+				if(p.getPRESET_NAME().equals(purchased.getPRESET_NAME()))
+				{
+					return true;
+				}
+			}
+			
+		}
 
+		return false;
+	}
+	
+	public List<SteerablePreset> getPurchasedList(UUID uuid)
+	{
+		return this._purchasedMap.get(uuid);
+	}
+	
+	public Map<UUID, List<SteerablePreset>> get_purchasedMap()
+	{
+		return _purchasedMap;
+	}
+	
 }

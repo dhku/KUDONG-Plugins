@@ -7,11 +7,16 @@ import lombok.Data;
 @Data
 public class SteerablePreset
 {
+	public String PRESET_NAME = "preset_1";
+	public String DISPLAY_NAME = "자동차";
+	public double PRICE = 1000.0;
 	public double FORWARD_DEFAULT_MAXSPEED = 1.2;
 	public double FORWARD_BOOST_MAXSPEED = 1.8;
 	public double ACCELERATION_RATE = 0.1;
 	public double DECELERATION_RATE = 0.1; 
 	public double TRACTION = 0.3; // 1이면 바로 그냥 꺽음 / 0에 가까울수록 미끄러짐
+	public float SIDE_STEER_SENSIVITY = 20f;
+	public int CustomModelDataID = 5;
 	
 	public SteerablePreset(
 			double FORWARD_DEFAULT_MAXSPEED,
@@ -29,4 +34,5 @@ public class SteerablePreset
 	}
 	
 	public SteerablePreset(){}
+	
 }

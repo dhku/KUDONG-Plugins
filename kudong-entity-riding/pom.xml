@@ -16,6 +16,11 @@
     		<id>dmulloy2-repo</id>
     		<url>https://repo.dmulloy2.net/nexus/repository/public/</url>
   		</repository>
+  		
+  		<repository>
+	        <id>jitpack.io</id>
+	        <url>https://jitpack.io</url>
+	    </repository>
 	</repositories>
 
 	<dependencies>
@@ -38,6 +43,14 @@
 			<version>${protocolLib.version}</version> 
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+	        <groupId>com.github.MilkBowl</groupId>
+	        <artifactId>VaultAPI</artifactId>
+	        <version>${vault-api.version}</version>
+	        <scope>provided</scope>
+    	</dependency>
+		
 	</dependencies>
 
 	<build>

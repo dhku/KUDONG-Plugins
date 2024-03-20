@@ -118,7 +118,7 @@ public abstract class AbsConfigLoader
 	
 	private void loadConfigTask(String moduleName)
 	{
-		this.logger.log(Level.INFO, "[config]" + moduleName + " 로드");
+		this.logger.log(Level.INFO, "" + moduleName + ".yml 로드중...");
 		File configFile = this.createOrGetFile(moduleName);
 		if(configFile == null) return;
 		ConfigurationMember module = this.modules.get(moduleName);

@@ -34,6 +34,7 @@
 		<reflections.version>0.9.11</reflections.version>
 		<protocolLib.version>4.5.1</protocolLib.version>
 		<postgresql.version>42.2.18</postgresql.version>
+		
 
 		<!-- 버킷 버전 -->    
 		<paper.version>1.16.1-R0.1-SNAPSHOT</paper.version>
@@ -41,6 +42,7 @@
 		<worldedit.version>7.1.0-SNAPSHOT</worldedit.version>
 		<dynmap.version>3.0-beta-10-spigot</dynmap.version>
 		<luckperm.version>5.1</luckperm.version>
+		<vault-api.version>1.7</vault-api.version>
 		<!-- <essentialsX.version>2.18.0</essentialsX.version> --> 
 	</properties>
 

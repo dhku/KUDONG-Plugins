@@ -5,11 +5,13 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import kr.kudong.entity.command.CommandManager;
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.util.ConfigLoader;
+import net.milkbowl.vault.economy.Economy;
 
 
 public class RidingCore extends JavaPlugin
@@ -19,7 +21,9 @@ public class RidingCore extends JavaPlugin
 	private ConfigLoader configLoader;
 	private PluginManager pluginManager;
 	private CommandManager commandManager;
-	private RidingManager ridingManager;
+	private Economy econ = null;
+	private static RidingManager ridingManager;
+	private static JavaPlugin plugin;
 	
 	@Override
 	public void onEnable()
@@ -27,12 +31,16 @@ public class RidingCore extends JavaPlugin
 		/**
 		 * 디펜던시 로드
 		 */
+		RidingCore.plugin = this;
 		this.logger = this.getLogger();
 		this.configLoader = new ConfigLoader(this, this.logger);
+		
+		if(!this.setupEconomy())return;
+
 		/**
 		 * 컨트롤러
 		 */
-		this.ridingManager = new RidingManager(this.logger,this);
+		RidingCore.ridingManager = new RidingManager(this.logger,this,this.econ);
 
 		/**
 		 * 커맨드
@@ -54,6 +62,16 @@ public class RidingCore extends JavaPlugin
 
 	}
 	
+	public static JavaPlugin GetPlugin()
+	{
+		return plugin;
+	}
+	
+	public static RidingManager GetManager()
+	{
+		return ridingManager;
+	}
+	
 	private void registerConfig()
 	{
 		this.configLoader.registerModule("riding", this.ridingManager.getConfig());
@@ -64,6 +82,32 @@ public class RidingCore extends JavaPlugin
 	{
 		this.pluginManager = Bukkit.getPluginManager();
 		this.pluginManager.registerEvents(this.ridingManager.getListener(),this);
+		this.pluginManager.registerEvents(this.ridingManager.getGuiListener(),this);
 	}
+	
+    private boolean setupEconomy() {
+   
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+        	this.logger.log(Level.SEVERE, "Vault 디펜던시가 발견되지않았기에 플러그인이 비활성화 되었습니다!");
+        	getServer().getPluginManager().disablePlugin(this);
+            return false;
+        }
+        
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+        	this.logger.log(Level.SEVERE, "Economy관련 플러그인이 발견되지않았기에 플러그인이 비활성화 되었습니다!");
+        	getServer().getPluginManager().disablePlugin(this);
+            return false;
+        }
+        econ = rsp.getProvider();
+        
+        if(econ == null)
+        {
+        	getServer().getPluginManager().disablePlugin(this);
+        	return false;
+        }
+
+        return true;
+    }
 
 }

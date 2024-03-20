@@ -1,6 +1,7 @@
 package kr.kudong.entity.listener;
 
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -39,7 +40,7 @@ public class EntityRidingListener implements Listener
 		this.logger = logger;
 		this.manager = manager;
 		this.plugin = plugin;
-		this.map = manager.getRidingPlayerMap();
+		this.map = this.manager.getRidingPlayerMap();
 	}
 	
 	@EventHandler
@@ -56,19 +57,30 @@ public class EntityRidingListener implements Listener
 		Player player = event.getPlayer();
 		UUID uuid = player.getUniqueId();
 		
-		if (!player.isInsideVehicle() && !this.map.containsEntity(uuid)) 
-		{
-			SteerableEntity entity = this.createSteerableEntity(player,new SteerablePreset());
-			this.map.registerEntity(uuid, entity);
-			this.map.registerRidingPlayerInput(uuid);
-			
-			int TaskID = this.manager.getScheduler().startRidingScheduler(player);
-			this.map.registerScheduler(uuid, TaskID);   
-		}
-		else if(player.isInsideVehicle() && this.map.containsEntity(uuid))
+		//장착시
+		ItemStack offhand = event.getOffHandItem();
+		//해제시 
+		ItemStack mainhand =event.getMainHandItem();
+		
+		if(player.isInsideVehicle() && this.map.containsEntity(uuid))
 		{
 			this.removeSteerableEntity(player);
 		}
+
+//		if (!player.isInsideVehicle() && !this.map.containsEntity(uuid)) 
+//		{
+//			SteerableEntity entity = this.createSteerableEntity(player,new SteerablePreset());
+//			this.map.registerEntity(uuid, entity);
+//			this.map.registerRidingPlayerInput(uuid);
+//			
+//			int TaskID = this.manager.getScheduler().startRidingScheduler(player);
+//			this.map.registerScheduler(uuid, TaskID);   
+//		}
+//		else if(player.isInsideVehicle() && this.map.containsEntity(uuid))
+//		{
+//			this.removeSteerableEntity(player);
+//		}
+		
 	}
 	
 	public SteerableEntity createSteerableEntity(Player player, SteerablePreset preset)

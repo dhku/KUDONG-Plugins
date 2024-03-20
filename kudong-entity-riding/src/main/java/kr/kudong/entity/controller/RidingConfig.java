@@ -1,20 +1,33 @@
 package kr.kudong.entity.controller;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import kr.kudong.entity.data.SteerablePreset;
 import kr.kudong.entity.util.ConfigurationMember;
 
 public class RidingConfig implements ConfigurationMember
 {
 	private final Logger logger;
-
-	public RidingConfig(Logger logger)
+	private final JsonParser parser;
+	private final RidingManager manager;
+	private final Gson gson; 
+	
+	public RidingConfig(Logger logger, RidingManager manager)
 	{
 		this.logger = logger;
+		this.manager = manager;
+		this.gson = new Gson();
+		this.parser = new JsonParser();
 	}
 	
 	@Override
@@ -22,15 +35,14 @@ public class RidingConfig implements ConfigurationMember
 	{
 		try
 		{
-//			String raw = config.getOrDefault("lobby-server", DEFAULT_LOCATION).toString();
-//			this.lobbyServerLoc = AldarLocation.deserialize(raw);
-//			this.lobbyServer = this.lobbyServerLoc.server;
-//			
-//			logger.log(Level.INFO, "lobby-server: "+lobbyServerLoc.serialize());
-//			raw = config.getOrDefault("first-join-location", DEFAULT_LOCATION).toString();
-//			this.firstJoinLoc = AldarLocation.deserialize(raw);
-//			logger.log(Level.INFO, "first-join-location: "+firstJoinLoc.serialize());
-
+			String raw = config.getOrDefault("preset","["+gson.toJson(new SteerablePreset()+"]")).toString();
+			//this.logger.log(Level.INFO,raw);
+			
+			SteerablePreset[] list = gson.fromJson(raw, SteerablePreset[].class);
+			this.manager.setPresetList(Arrays.asList(list));
+			
+			this.logger.log(Level.INFO,"탈것 "+this.manager.getPresetList().size()+"개의 프리셋이 로드되었습니다.");
+			
 		} catch (Exception e)
 		{
 			this.logger.log(Level.WARNING, "entitymanage config 로드 실패", e);
@@ -43,8 +55,7 @@ public class RidingConfig implements ConfigurationMember
 	public Map<String, Object> getModuleConfig()
 	{
 		Map<String, Object> map = new HashMap<>();
-//		map.put("lobby-server", this.lobbyServerLoc.serialize());
-//		map.put("first-join-location", this.firstJoinLoc.serialize());
+		map.put("preset", "["+gson.toJson(new SteerablePreset()+"]"));
 		return map;
 	}
 

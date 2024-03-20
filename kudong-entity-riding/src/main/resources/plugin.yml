@@ -1,6 +1,6 @@
-name: ${artifactId}
+name: Kudong-entity-riding
 version: ${version}
-author: dhku10@gmail.com
+author: KUDONG
 description: ${description}
 api-version: ${bukkit-api.version}
 main: kr.kudong.entity.RidingCore

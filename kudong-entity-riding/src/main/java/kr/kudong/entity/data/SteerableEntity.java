@@ -48,7 +48,7 @@ public class SteerableEntity
 		ArmorStand armor = (ArmorStand) player.getWorld().spawnEntity(player.getLocation(), EntityType.ARMOR_STAND);
 		ItemStack item = new ItemStack(Material.DIAMOND_HOE);
 		ItemMeta meta = item.getItemMeta();
-		meta.setCustomModelData(5);
+		meta.setCustomModelData(preset.CustomModelDataID);
 		item.setItemMeta(meta);
 		
 		armor.setVisible(false);
@@ -118,12 +118,12 @@ public class SteerableEntity
 		{
 			if(sidewalks < 0)
 			{
-				e.setRotation(e.getLocation().getYaw() + 20f, 0.0f);
+				e.setRotation(e.getLocation().getYaw() + this.preset.SIDE_STEER_SENSIVITY , 0.0f);
 				
 			}
 			else if(sidewalks > 0)
 			{
-				e.setRotation(e.getLocation().getYaw() - 20f, 0.0f);
+				e.setRotation(e.getLocation().getYaw() - this.preset.SIDE_STEER_SENSIVITY , 0.0f);
 			}
 
 			Vector v2 = e.getLocation().getDirection().clone();
@@ -209,7 +209,7 @@ public class SteerableEntity
 	
 	public void updateGUI(Player player)
 	{
-		player.sendActionBar("§6타입 §f"+this.entity.getName()+" §7| §6속도 §f"
+		player.sendActionBar("§6탈것 §f"+this.preset.getDISPLAY_NAME()+" §7| §6속도 §f"
 						+(Math.round(this.velocity*100)/10.0)*10+" §7| §6위치 §f"
 						+(int)this.entity.getLocation().getX()+"§6 , §f"
 						+(int)this.entity.getLocation().getY()+"§6 , §f"

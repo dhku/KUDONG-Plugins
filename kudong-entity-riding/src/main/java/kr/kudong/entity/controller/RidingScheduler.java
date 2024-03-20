@@ -33,7 +33,7 @@ public class RidingScheduler
 		this.logger = logger;
 		this.plugin = plugin;
 		this.manager = manager;
-		this.map = manager.getRidingPlayerMap();
+		this.map = this.manager.getRidingPlayerMap();
 	}
 	
 	public int startRidingScheduler(Player player)
