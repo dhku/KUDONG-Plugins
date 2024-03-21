@@ -14,25 +14,30 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import kr.kudong.entity.RidingCore;
-import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.data.RidingPlayerMap;
+import kr.kudong.entity.data.SteerableEntity;
 import kr.kudong.entity.data.SteerablePreset;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
-public class RidingShopGUI extends GUI
+public class RidingManageGUI extends GUI
 {
+	private RidingPlayerMap map;
 	private List<SteerablePreset> list;
 	
-	public RidingShopGUI(Player player)
+	public RidingManageGUI(Player player)
 	{
-		super("§7탈것 상점", player, 27);
+		super("§7탈것 관리", player, 27);
 	}
 
 	@Override
 	void init()
 	{
-		this.list = this.manager.getPresetList();
+		this.inv.clear();
+		this.map = this.manager.getRidingPlayerMap();
+		this.list = this.map.getPurchasedList(uuid);
+		
+		if(this.list == null) return;
 		
 		int count = 0;
 		for(SteerablePreset p : list)
@@ -42,11 +47,7 @@ public class RidingShopGUI extends GUI
 			int customID = p.getCustomModelDataID();
 			String displayName = p.getDISPLAY_NAME();
 			
-			double FORWARD_DEFAULT_MAXSPEED = p.getFORWARD_DEFAULT_MAXSPEED();
-			double FORWARD_BOOST_MAXSPEED = p.getFORWARD_BOOST_MAXSPEED();
-			double TRACTION = p.getTRACTION();
 			double price = p.getPRICE();
-			float sensitive = p.getSIDE_STEER_SENSIVITY();
 			
 			ItemStack item = new ItemStack(Material.DIAMOND_HOE);
 			ItemMeta meta = item.getItemMeta();
@@ -56,16 +57,14 @@ public class RidingShopGUI extends GUI
 			List<String> l = new ArrayList<>();
 			
 			l.add("");
-			l.add("§7-해당 상품을 좌클릭시 구매가 가능합니다.");
-			l.add("§7└가격: §e"+price+"$");
-			l.add("§7└최고 스피드: §b"+FORWARD_DEFAULT_MAXSPEED*100+"km/h §7부스트 적용시(§b"+FORWARD_BOOST_MAXSPEED*100+"km/h§7)");
-			l.add("§7└민감도: §b"+sensitive+"");
-			l.add("§7└접지력: §b"+TRACTION+"");
+			l.add("§7-좌클릭시 해당 물건을 판매합니다.");
+			l.add("§7-클릭시 반환되는 가격: §e"+price+"$");
 			
-			setItem("§6§l"+displayName+" §6구매",l, item,(short)0,1, count++);
+			setItem("§6§l"+displayName+"§6",l, item,(short)0,1, count++);
 		}
 		
 		setItem("§a§l메인 메뉴로 돌아가기", Arrays.asList("","§7-메인 메뉴로 돌아갑니다."), Material.CHEST,(short)0,1,26);
+		
 	}
 
 	@Override
@@ -76,9 +75,6 @@ public class RidingShopGUI extends GUI
         if(item == null) return;
         if(item.getType().equals(Material.AIR)) return;
 
-        Economy econ = this.manager.getEcon();
-        RidingPlayerMap map = this.manager.getRidingPlayerMap();
-        
         Player player = getPlayer();
         int slot = e.getRawSlot();
         
@@ -88,36 +84,25 @@ public class RidingShopGUI extends GUI
         	new RidingMainGUI(player).openGUI();
         	return;
         }
-        
+
         SteerablePreset preset = list.get(slot);
-        
-        //player.closeInventory();
-        
-        double money = econ.getBalance(player);
+        Economy econ = this.manager.getEcon();
         
         if(map.isExistPreset(uuid, preset))
         {
-        	player.sendMessage("§7이미 존재하는 탈것입니다.");
-        }
-        else if(money < preset.getPRICE())
-        {
-        	player.sendMessage("§7돈이 부족 합니다. <잔고: §e"+money+"$"+"§7>");
-        }
-        else
-        {
         	
-        	EconomyResponse r = econ.withdrawPlayer(player, preset.getPRICE());
+        	EconomyResponse r = econ.depositPlayer(player, preset.getPRICE());
         	
             if(r.transactionSuccess()) 
             {
-             	RidingCore.getDbService().asyncInsertRidingData(player, preset, (isSuccess)->
+             	RidingCore.getDbService().asyncDeleteRidingData(player, preset, (isSuccess)->
             	{
             		if(isSuccess)
             		{
             			Bukkit.getScheduler().runTask(plugin, ()->{
-            				map.AddPreset(uuid, preset);
-            				player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7구매에 §e%s§7가 §c출금§7되었고 잔고 §e%s§7가 남았습니다.", econ.format(r.amount), econ.format(r.balance)));
-                        	player.sendMessage("§7구매하신 상품은 §b차고§7에서 이용 가능합니다.");
+            				map.removePresetInPurchasedData(uuid, preset);
+            				player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7판매에 §e%s§7가 §a입금§7되었고 잔고 §e%s§7가 되었습니다.", econ.format(r.amount), econ.format(r.balance)));
+            				this.refresh();
             				
             			});
                       	
@@ -127,7 +112,7 @@ public class RidingShopGUI extends GUI
             			Bukkit.getScheduler().runTask(plugin, ()->{
             				
             				player.sendMessage("§7거래 오류가 발생하였습니다.");
-            				econ.depositPlayer(player, preset.getPRICE());
+            				econ.withdrawPlayer(player, preset.getPRICE());
             				
             			});
             			
@@ -138,7 +123,10 @@ public class RidingShopGUI extends GUI
             } else {
             	player.sendMessage(String.format("거래 오류가 발생하였습니다. 에러: %s", r.errorMessage));
             }
+       
         }
+        
+    
 	}
 
 	@Override

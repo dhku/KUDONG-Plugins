@@ -1,6 +1,7 @@
 package kr.kudong.entity.gui;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -22,7 +23,7 @@ public class RidingStorageGUI extends GUI
 	
 	public RidingStorageGUI(Player player)
 	{
-		super("§7차고", player, 27);
+		super("§7운전하기", player, 27);
 	}
 
 	@Override
@@ -36,6 +37,8 @@ public class RidingStorageGUI extends GUI
 		int count = 0;
 		for(SteerablePreset p : list)
 		{
+			if(count == 26) break;
+			
 			int customID = p.getCustomModelDataID();
 			String displayName = p.getDISPLAY_NAME();
 			
@@ -61,6 +64,8 @@ public class RidingStorageGUI extends GUI
 			
 			setItem("§6§l"+displayName+"§6",l, item,(short)0,1, count++);
 		}
+		
+		setItem("§a§l메인 메뉴로 돌아가기", Arrays.asList("","§7-메인 메뉴로 돌아갑니다."), Material.CHEST,(short)0,1,26);
 	}
 
 	@Override
@@ -74,12 +79,18 @@ public class RidingStorageGUI extends GUI
         Player player = getPlayer();
         int slot = e.getRawSlot();
         
-        SteerablePreset preset = list.get(slot);
+        if(slot == 26) 
+        {
+        	this.closeGUI();
+        	new RidingMainGUI(player).openGUI();
+        	return;
+        }
         
+        SteerablePreset preset = list.get(slot);
         
         if(player.isInsideVehicle())
         {
-        	player.sendMessage("§7F키를 눌러 지금 타고있는 탈 것을 해제해주세요.");
+        	player.sendMessage("§7먼저 F키를 눌러 타고있는 것에서 하차해 주세요.");
         }
         else if (!this.map.containsEntity(uuid)) 
 		{
@@ -91,7 +102,7 @@ public class RidingStorageGUI extends GUI
 			this.map.registerScheduler(uuid, TaskID); 
 			
 			player.sendMessage("§7성공적으로 "+preset.DISPLAY_NAME+"에 탑승하였습니다.");
-			player.sendMessage("§7F키를 눌러 지금 타고있는 탈 것을 나올수 있습니다.");
+			player.sendMessage("§7F키를 눌러 타고있는 것에서 나올 수 있습니다.");
 		}
         else
         {

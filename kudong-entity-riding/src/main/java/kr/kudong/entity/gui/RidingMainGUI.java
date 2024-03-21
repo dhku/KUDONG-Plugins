@@ -22,10 +22,10 @@ public class RidingMainGUI extends GUI
 	void init()
 	{
         
-		setItem("§6§l탈것 상점", Arrays.asList("","§7-탈것을 구매할수있는 상점으로 이동합니다."), Material.BOOK,(short)0,1,11);
-		setItem("§a§l차고", Arrays.asList("","§7-탈것을 이용하실수 있습니다."), Material.MINECART,(short)0,1,13);
-        setItem("§a§l수리/업그레이드", Arrays.asList("","§7-탈것의 성능을 업그레이드 합니다."), Material.ANVIL,(short)0,1,15);
-        setHead("§a§l플레이어 정보",Arrays.asList("","§7-플레이어의 정보를 확인합니다."), Bukkit.getOfflinePlayer(getPlayer().getUniqueId()),1,18);
+		setItem("§6§l탈것 상점", Arrays.asList("","§7-탈것을 구매할수있는 상점으로 이동합니다."), Material.GOLD_INGOT,(short)0,1,11);
+		setItem("§a§l운전", Arrays.asList("","§7-탈것을 이용하실 수 있습니다."), Material.MINECART,(short)0,1,13);
+        setItem("§a§l탈것 관리", Arrays.asList("","§7-탈것을 관리합니다."), Material.ANVIL,(short)0,1,15);
+        setItem("§a§l도움말",Arrays.asList("","§7-명령어를 확인합니다."), Material.BOOK,(short)0,1,18);
         setItem("§a§l창 나가기", Arrays.asList("","§7-해당 창을 나갑니다."), Material.BARRIER,(short)0,1,26);
 
 //        setItem("§a§l마을 정보", Arrays.asList("","§7-마을의 정보를 열람하실 수 있습니다."), Material.PAPER,(short)0,1,9);
@@ -46,6 +46,7 @@ public class RidingMainGUI extends GUI
         if(item == null) return;
         if(item.getType().equals(Material.AIR)) return;
 
+        Player p = getPlayer();
         int slot = e.getRawSlot();
       
         switch(slot) {
@@ -57,10 +58,15 @@ public class RidingMainGUI extends GUI
                 new RidingStorageGUI(getPlayer()).openGUI();
                 break;
             case 15:
-                //new TownyPlayerGUI(getPlayer()).openGUI();
+                new RidingManageGUI(getPlayer()).openGUI();
                 break;
             case 18:
-                //new TownyAltarGUI(getPlayer()).openGUI();
+                p.sendMessage("§a§l탈것 §f시스템 명령어 도움말");
+                p.sendMessage("========================================");
+                p.sendMessage("§e/탈것 or /ride or /xkfrjt §6: 탈것 관리 메뉴를 엽니다.");
+                p.sendMessage("§e/탈것 도움말 §6: 탈것 명령어를 확인합니다.");
+                p.sendMessage("§e/탈것 정보 §6: 플러그인 정보를 확인합니다.");
+                getPlayer().closeInventory();
                 break;
             case 26:
             	getPlayer().closeInventory();

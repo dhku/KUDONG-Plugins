@@ -75,13 +75,13 @@ public abstract class AbsConfigLoader
 		int checksum = this.checksums.getOrDefault(moduleName, 0);
 		if(newChecksum == checksum)
 		{
-			this.logger.log(Level.INFO, "[config]"+moduleName+"내부 모듈에서 변경사항이 발견되지 않았으므로 저장하지 않습니다.");
+			this.logger.log(Level.INFO, moduleName+".yml 내부 모듈에서 변경사항이 발견되지 않았으므로 저장하지 않습니다.");
 			return;
 		}
 		FileWriter fileWriter = null;
 		try
 		{
-			this.logger.log(Level.INFO, "[config]"+moduleName+" 저장...");
+			this.logger.log(Level.INFO, moduleName+".yml 저장...");
 			fileWriter = new FileWriter(configFile);
 			this.yaml.dump(data, fileWriter);
 			
@@ -89,7 +89,7 @@ public abstract class AbsConfigLoader
 		}
 		catch (Exception e)
 		{
-			this.logger.log(Level.SEVERE, "[config] 저장중 에러", e);
+			this.logger.log(Level.SEVERE, "config 저장중 에러", e);
 		}
 		finally
 		{
@@ -101,7 +101,7 @@ public abstract class AbsConfigLoader
 				}
 				catch(IOException e)
 				{
-					this.logger.log(Level.SEVERE, "[config] 저장중 에러(닫기 실패)", e);
+					this.logger.log(Level.SEVERE, "config 저장중 에러(닫기 실패)", e);
 				}
 			}
 		}
@@ -138,14 +138,14 @@ public abstract class AbsConfigLoader
 				this.checksums.put(moduleName, checksum);
 				if(!module.installConfig(section))
 				{
-					this.logger.log(Level.WARNING, "[config]" + moduleName + " 로드중 오류 반환, 해당모듈 config 초기화 바랍니다.");
+					this.logger.log(Level.WARNING, moduleName + ".yml 로드중 오류 반환, 해당모듈 config 초기화 바랍니다.");
 				}
 			}
 			
 		}
 		catch (Exception e)
 		{
-			this.logger.log(Level.SEVERE, "[config]" + moduleName + " 로드 실패", e);
+			this.logger.log(Level.SEVERE, moduleName + ".yml 로드 실패", e);
 		}
 		finally
 		{
@@ -157,7 +157,7 @@ public abstract class AbsConfigLoader
 				}
 				catch(IOException e)
 				{
-					this.logger.log(Level.SEVERE, "[config]" + moduleName + " 닫기 실패", e);
+					this.logger.log(Level.SEVERE, moduleName + ".yml 닫기 실패", e);
 				}
 			}
 			

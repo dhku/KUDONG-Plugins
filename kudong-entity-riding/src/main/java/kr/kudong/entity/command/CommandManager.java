@@ -49,15 +49,23 @@ public class CommandManager implements CommandExecutor
 		{
             p.sendMessage("§a§l탈것 §f시스템 명령어 도움말");
             p.sendMessage("========================================");
-            p.sendMessage("§e/탈것 §6: 탈것 관리 메뉴를 엽니다.");
-            p.sendMessage("§e/탈것 채팅 §6: 마을 채팅모드로 전환합니다.");
-            p.sendMessage("§e/마을 메뉴 §6: 마을 관리 메뉴를 엽니다.");
-            p.sendMessage("§e/마을 점수 §6: 마을의 점수를 확인합니다.");
-            p.sendMessage("§e/마을 정보 §6: 마을의 정보를 확인합니다.");
+            p.sendMessage("§e/탈것 or /ride or /xkf or /xkfrjt §6: 탈것 관리 메뉴를 엽니다.");
+            p.sendMessage("§e/탈것 도움말 §6: 탈것 명령어를 확인합니다.");
+            p.sendMessage("§e/탈것 정보 §6: 플러그인 정보를 확인합니다.");
 			return true;
 		}
 		
-		
+		if(args[0].equalsIgnoreCase("정보") || args[0].equalsIgnoreCase("info"))
+		{
+            p.sendMessage("§a§l탈것 §f시스템 정보");
+            p.sendMessage("========================================");
+            p.sendMessage("§e플러그인: Kudong-entity-riding");
+            p.sendMessage("§e버전: 1.0.0 Ver (Minecraft 1.20.4)");
+            p.sendMessage("§e제작자: KUDONG");
+            p.sendMessage("§e문의: dhku10@gmail.com");
+			return true;
+		}
+
 		return true;
 	}
 

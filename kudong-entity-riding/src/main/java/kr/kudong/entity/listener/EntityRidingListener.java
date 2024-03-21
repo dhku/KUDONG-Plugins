@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -46,6 +47,20 @@ public class EntityRidingListener implements Listener
 		this.plugin = plugin;
 		this.map = this.manager.getRidingPlayerMap();
 	}
+	
+	
+	@EventHandler
+	private void onPlayerManipulateArmorstand(PlayerArmorStandManipulateEvent event)
+	{
+		Player p = event.getPlayer();
+		Entity e = p.getVehicle();
+		
+		if(e != null && e.getType() == EntityType.ARMOR_STAND)
+		{
+			event.setCancelled(true);
+		}
+	}
+	
 	
 	@EventHandler
 	private void onPlayerJoin(PlayerJoinEvent event)
@@ -84,6 +99,7 @@ public class EntityRidingListener implements Listener
 		if(player.isInsideVehicle() && this.map.containsEntity(uuid))
 		{
 			this.removeSteerableEntity(player);
+			
 		}
 
 //		if (!player.isInsideVehicle() && !this.map.containsEntity(uuid)) 
@@ -131,6 +147,7 @@ public class EntityRidingListener implements Listener
 		if(this.map.containsEntity(uuid))
 		{
 			SteerableEntity e = this.map.getEntity(uuid);
+			player.sendMessage("§7"+e.getPreset().getDISPLAY_NAME()+"에서 나왔습니다.");
 			e.destroyEntity();
 			e.clear();
 			this.map.removeEntity(uuid);

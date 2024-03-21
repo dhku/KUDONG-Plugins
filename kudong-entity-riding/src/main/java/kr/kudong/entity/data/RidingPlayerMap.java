@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.entity.Entity;
@@ -45,6 +46,18 @@ public class RidingPlayerMap
 			this._purchasedMap.remove(uuid);
 		}
 	}
+	
+	public void removePresetInPurchasedData(UUID uuid,SteerablePreset purchased)
+	{
+		int idx = this.getIndexExistPreset(uuid, purchased);
+		
+		if(idx != -1 && this._purchasedMap.containsKey(uuid))
+		{
+			List<SteerablePreset> p = this._purchasedMap.get(uuid);
+			p.remove(idx);
+		}
+	}
+	
 	
 	public void registerRidingPlayerInput(UUID uuid)
 	{
@@ -143,6 +156,27 @@ public class RidingPlayerMap
 		}
 
 		return false;
+	}
+	
+	public int getIndexExistPreset(UUID uuid, SteerablePreset purchased)
+	{
+		int count = 0;
+		if(this._purchasedMap.containsKey(uuid))
+		{
+			List<SteerablePreset> list = this._purchasedMap.get(uuid);
+			
+			for(SteerablePreset p : list)
+			{
+				if(p.getPRESET_NAME().equals(purchased.getPRESET_NAME()))
+				{
+					return count;
+				}
+				count++;
+			}
+			
+		}
+
+		return -1;
 	}
 	
 	public List<SteerablePreset> getPurchasedList(UUID uuid)
