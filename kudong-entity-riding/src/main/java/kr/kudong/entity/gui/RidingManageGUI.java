@@ -27,7 +27,7 @@ public class RidingManageGUI extends GUI
 	
 	public RidingManageGUI(Player player)
 	{
-		super("§7탈것 관리", player, 27);
+		super("§7탈것 정리", player, 27);
 	}
 
 	@Override

@@ -23,7 +23,7 @@ public class RidingPlayerMap
 	private Map<UUID,Integer> _schedulerMap; 
 	
 	private Map<UUID,List<SteerablePreset>> _purchasedMap;//구매한 정보
-
+	private Map<UUID,RidingPlayerSetting> _settingMap;
 	
 	public RidingPlayerMap(Logger logger,JavaPlugin plugin,RidingManager manager)
 	{
@@ -34,7 +34,22 @@ public class RidingPlayerMap
 		this._keyInput = new HashMap<>();
 		this._schedulerMap = new HashMap<>();
 		this._purchasedMap = new HashMap<>();
-
+		this._settingMap = new HashMap<>();
+	}
+	
+	public void addPlayerSetting(UUID uuid,RidingPlayerSetting setting)
+	{
+		this._settingMap.put(uuid, setting);
+	}
+	
+	public void removePlayerSetting(UUID uuid)
+	{
+		this._settingMap.remove(uuid);
+	}
+	
+	public RidingPlayerSetting getPlayerSetting(UUID uuid)
+	{
+		return this._settingMap.get(uuid);
 	}
 	
 	public void removePurchasedData(UUID uuid)

@@ -31,6 +31,7 @@ public class SteerableEntity
 	
 	private boolean isInit = false;
 	private boolean isCasualMode = false;
+	private boolean isPositionVisible = false;
 	
 	private List<Location> entityOffset;
 	private Location entityCenter;
@@ -53,6 +54,7 @@ public class SteerableEntity
 		
 		armor.setVisible(false);
 		armor.getEquipment().setHelmet(item);
+		armor.setCollidable(false);
 		
 		this._entity = armor;
 		
@@ -101,7 +103,10 @@ public class SteerableEntity
 		}
 		else if(forward < 0)
 		{
-			this.velocity += -this.preset.DECELERATION_RATE;
+			if(this.velocity > 0.0f)
+				this.velocity += -0.1f; //브레이크
+			else
+				this.velocity += -this.preset.DECELERATION_RATE;
 			
 			if(this.velocity < -0.4f)
 				this.velocity = -0.3f;
@@ -138,6 +143,7 @@ public class SteerableEntity
 		else
 		{
 			this.currentDirection = player.getLocation().getDirection().setY(0).normalize();
+			e.setRotation(player.getLocation().getYaw(), 0);
 		}
 		
 		this.updateGUI(player);
@@ -215,11 +221,20 @@ public class SteerableEntity
 	
 	public void updateGUI(Player player)
 	{
-		player.sendActionBar("§6탈것 §f"+this.preset.getDISPLAY_NAME()+" §7| §6속도 §f"
-						+(Math.round(this.velocity*100)/10.0)*10+" §7| §6위치 §f"
-						+(int)this.entity.getLocation().getX()+"§6 , §f"
-						+(int)this.entity.getLocation().getY()+"§6 , §f"
-						+(int)this.entity.getLocation().getZ());
+		if(isPositionVisible)
+		{
+			player.sendActionBar("§6탈것 §f"+this.preset.getDISPLAY_NAME()+" §7| §6속도 §f"
+					+(Math.round(this.velocity*100)/10.0)*10+" §7| §6위치 §f"
+					+(int)this.entity.getLocation().getX()+"§6 , §f"
+					+(int)this.entity.getLocation().getY()+"§6 , §f"
+					+(int)this.entity.getLocation().getZ());
+			
+		}
+		else
+		{
+			player.sendActionBar("§6탈것 §f"+this.preset.getDISPLAY_NAME()+" §7| §6속도 §f"
+					+(Math.round(this.velocity*100)/10.0)*10);
+		}
 	}
 
 	public void clear()

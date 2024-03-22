@@ -60,6 +60,7 @@ public class RidingCore extends JavaPlugin
 		this.dbAccess.start();
 		
 		this.dbAccess.simpleAsyncExecute(SQLSchema.RidingTable);
+		this.dbAccess.simpleAsyncExecute(SQLSchema.RidingPlayerTable);
 		
 		this.logger.log(Level.INFO, "Kudong-Entity-Riding 플러그인이 성공적으로 활성화 되었습니다!");
 

@@ -117,7 +117,7 @@ public class RidingShopGUI extends GUI
             			Bukkit.getScheduler().runTask(plugin, ()->{
             				map.AddPreset(uuid, preset);
             				player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7구매에 §e%s§7가 §c출금§7되었고 잔고 §e%s§7가 남았습니다.", econ.format(r.amount), econ.format(r.balance)));
-                        	player.sendMessage("§7구매하신 상품은 §b차고§7에서 이용 가능합니다.");
+                        	player.sendMessage("§7구매하신 상품은 §b탈것 메인 - 운전§7에서 이용 가능합니다.");
             				
             			});
                       	

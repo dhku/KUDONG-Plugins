@@ -13,6 +13,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import kr.kudong.entity.data.RidingPlayerMap;
+import kr.kudong.entity.data.RidingPlayerSetting;
 import kr.kudong.entity.data.SteerableEntity;
 import kr.kudong.entity.data.SteerablePreset;
 
@@ -95,6 +96,11 @@ public class RidingStorageGUI extends GUI
         else if (!this.map.containsEntity(uuid)) 
 		{
 			SteerableEntity entity = this.manager.getListener().createSteerableEntity(player,preset);
+			RidingPlayerSetting ps = this.map.getPlayerSetting(uuid);
+			
+			entity.setCasualMode(ps.isCasualMode());
+			entity.setPositionVisible(ps.isPositionVisible());
+			
 			this.map.registerEntity(uuid, entity);
 			this.map.registerRidingPlayerInput(uuid);
 			

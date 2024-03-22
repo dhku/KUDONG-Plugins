@@ -16,6 +16,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -29,6 +31,7 @@ import org.bukkit.util.Vector;
 import kr.kudong.entity.RidingCore;
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.data.RidingPlayerMap;
+import kr.kudong.entity.data.RidingPlayerSetting;
 import kr.kudong.entity.data.SteerableEntity;
 import kr.kudong.entity.data.SteerablePreset;
 import kr.kudong.entity.db.RidingService;
@@ -48,14 +51,28 @@ public class EntityRidingListener implements Listener
 		this.map = this.manager.getRidingPlayerMap();
 	}
 	
+	@EventHandler
+	public void onEntityDamageEvent(final EntityDamageEvent e) {
+		 if (!(e.getEntity() instanceof Player)) {
+	            return;
+	        }
+	        Player p = (Player) e.getEntity();
+	        UUID uuid = p.getUniqueId();
+	        
+	        if (e.getCause() == DamageCause.FALL) 
+	        {
+	        	if(this.map.containsEntity(uuid))
+	        		e.setCancelled(true);
+	        }
+	}
 	
 	@EventHandler
 	private void onPlayerManipulateArmorstand(PlayerArmorStandManipulateEvent event)
 	{
 		Player p = event.getPlayer();
-		Entity e = p.getVehicle();
+		UUID uuid = p.getUniqueId();
 		
-		if(e != null && e.getType() == EntityType.ARMOR_STAND)
+		if(this.map.containsEntity(uuid))
 		{
 			event.setCancelled(true);
 		}
@@ -70,18 +87,34 @@ public class EntityRidingListener implements Listener
 		UUID uuid = player.getUniqueId();
 		
 		List<SteerablePreset> purchased = service.selectRidingData(player);
-		this.map.setPlayerPurchasedList(uuid, purchased);
+		RidingPlayerSetting ps = service.selectRidingPlayerSettingData(player);
 		
+		this.map.setPlayerPurchasedList(uuid, purchased);
+		this.map.addPlayerSetting(uuid, ps);
 	}
 	
 	
 	@EventHandler
 	private void onPlayerQuit(PlayerQuitEvent event)
 	{
+		RidingService service = RidingCore.getDbService();
 		Player player = event.getPlayer();
 		UUID uuid = player.getUniqueId();
 		this.removeSteerableEntity(player);
 		this.map.removePurchasedData(uuid);
+		
+		RidingPlayerSetting ps = this.map.getPlayerSetting(uuid);
+		
+		if(ps.isRegisteredDB())
+			service.asyncUpdateRidingPlayerSettingData(player, ps, (isSuccess)->
+			{
+				this.map.removePlayerSetting(uuid);
+			});
+		else
+			service.asyncInsertRidingPlayerSettingData(player, ps, (isSuccess)->
+			{
+				this.map.removePlayerSetting(uuid);
+			});
 	}
 	
 	//탈것 장착
@@ -126,8 +159,9 @@ public class EntityRidingListener implements Listener
 		ArmorStand armor = (ArmorStand)entity;
 		armor.setSmall(true);
 		armor.setVisible(false);
+		armor.setCollidable(false);
 		entity.addPassenger(player);
-
+		
 		SteerableEntity e = new SteerableEntity(player,entity,preset);
 		return e;
 	}
