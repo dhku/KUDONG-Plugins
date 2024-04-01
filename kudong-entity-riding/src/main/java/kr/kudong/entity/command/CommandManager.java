@@ -10,6 +10,9 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.UserMap;
+
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.gui.RidingMainGUI;
 
@@ -38,6 +41,8 @@ public class CommandManager implements CommandExecutor
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
 	{
 		Player p = (Player) sender;
+		
+		
 		
 		if(args.length == 0) 
 		{

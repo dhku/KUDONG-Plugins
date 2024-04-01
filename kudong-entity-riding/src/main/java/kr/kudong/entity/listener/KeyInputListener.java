@@ -42,9 +42,6 @@ public class KeyInputListener extends PacketAdapter
 		float forward = container.getFloat().read(1); 
 		boolean shift = container.getBooleans().read(1);
 		
-		if(shift == true)
-			event.setCancelled(true);
-		
 //		System.out.println("forward: "+ forward);
 //		System.out.println("sidewalks: "+ sidewalks);
 //		System.out.println("shift: "+ shift);
@@ -52,6 +49,9 @@ public class KeyInputListener extends PacketAdapter
 		
 		if(this.map.containsPlayerInput(uuid))
 		{
+			if(shift == true)
+				event.setCancelled(true);
+			
 			KeyInputState state = this.map.getRidingPlayerInput(uuid);
 			state.setState(forward, sidewalks, shift);
 		}

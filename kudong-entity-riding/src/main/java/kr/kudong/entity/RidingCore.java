@@ -1,5 +1,6 @@
 package kr.kudong.entity;
 
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,12 +10,15 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.earth2me.essentials.IEssentials;
+
 import kr.kudong.entity.command.CommandManager;
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.db.RidingService;
 import kr.kudong.entity.db.SQLSchema;
 import kr.kudong.entity.util.ConfigLoader;
 import kr.kudong.entity.util.DBAccess;
+
 import net.milkbowl.vault.economy.Economy;
 
 
@@ -47,6 +51,8 @@ public class RidingCore extends JavaPlugin
 		RidingCore.ridingManager = new RidingManager(this.logger,this,this.econ);
 		RidingCore.dbService = new RidingService(this.logger,this, this.dbAccess);
 		
+		//IEssentials essentials = (IEssentials) Bukkit.getPluginManager().getPlugin("Essentials");
+
 		/**
 		 * 커맨드
 		 */
