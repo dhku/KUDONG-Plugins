@@ -85,7 +85,7 @@ echo =====================================
 
 declare -A minecraftList;
 
-for hostName in ${hostIPArr[@]};
+for hostname in ${hostIPArr[@]};
 do
 	
 	for screenName in $(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -v -E 'grep|java|bash' | grep -E -o "\[([^\[]*)\]" | grep -E "*-minecraft");
