@@ -88,7 +88,7 @@ declare -A minecraftList;
 for hostname in ${hostArr[@]};
 do
 	
-	for screenName in $(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -E 'grep|java|bash' | grep -E -o "\[([^\[]*)\]" | grep -E "*-minecraft");
+	for screenName in $(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -v -E 'grep|java|bash' | grep -E -o "\[([^\[]*)\]" | grep -E "*-minecraft");
 	do
 		echo "killing ${screenName}'s minecraft server....";
         minecraftList["$screenName"]="$hostname";
@@ -192,7 +192,7 @@ do
 
     echo "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -Du=${servername}-minecraft -jar -Xms$ram -Xmx$ram -server paper.jar -nogui"
     
-    sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ ; screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
+    sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ ; screen -dmS \[${servername}-minecraft\] java -Du=${servername}-minecraft -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
 done
 
 echo =====================================
