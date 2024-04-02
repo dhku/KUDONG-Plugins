@@ -74,10 +74,6 @@ do
     echo "$id@$ip:$hostBaseDir $mountDir";
     mountedDirList["$hostname"]="$mountDir";
 
-
-    echo "Clean host Base Directory....."
-    rm -rf $mountDir/*;
-
     echo $separationPhrase
 
 done
@@ -155,6 +151,9 @@ do
 
 	#SET COPY TARGET DIRECTORY 
 	copyTargetDir="${mountedDirList["$hostname"]}/$servername";
+
+    echo "Clean host Base Directory....."
+    rm -rf $copyTargetDir/*;
 
 	mkdir -p $copyTargetDir;
 
