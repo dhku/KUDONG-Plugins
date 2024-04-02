@@ -134,11 +134,11 @@ do
 	done
 done
 
-#=====================
-#
-#READ server_settings.json
-#
-#=====================
+echo ===========================
+echo
+echo  READ server_settings.json
+echo 
+echo ===========================
 
 settingsJson=$(cat $currentDir/server_settings.json | jq '.');
 
@@ -171,11 +171,11 @@ do
 	done
 done
 
-#=====================
-#
-#    START SERVER
-#
-#=====================
+echo =====================
+echo
+echo    START SERVER
+echo
+echo =====================
 
 
 for i in $(seq $(echo $hostJson | jq ' . | keys | length'));
@@ -193,16 +193,13 @@ do
     echo "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui"
 
     sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} 'cd ${hostBaseArr["$hostname"]}/$servername/ ; screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui';
-    sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} 'cd ${hostBaseArr["$hostname"]}/$servername/ ; touch helloworld';
-
-    #ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
 done
 
-#=====================
-#
-#    UNMOUNT SERVER
-#
-#=====================
+echo =====================
+echo
+echo    UNMOUNT SERVER
+echo
+echo =====================
 
 for i in ${mountedDirList[@]}; 
 do 
