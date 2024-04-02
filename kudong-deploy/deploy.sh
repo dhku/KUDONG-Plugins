@@ -108,7 +108,7 @@ do
 	while true;
 	do
         echo "Test2"
-        hostname="${minecraftList["$screenName"]}"
+        hostname="${minecraftList[\"$screenName\"]}"
 
         echo "hostname = $hostname"
 
