@@ -102,14 +102,14 @@ done
 
 echo "Test1"
 
-for screenName in ${minecraftList[@]};
+for screenName in ${!minecraftList[@]};
 do
 	loopCount=0;
 	while true;
 	do
         echo "Test2"
-        hostname="${minecraftList[\"$screenName\"]}"
-
+        hostname="${minecraftList["$screenName"]}"
+        echo "ddd ${minecraftList["$screenName"]}"
         echo "hostname = $hostname"
 
 		sshResult=$(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -E 'java.*${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print $2}')
