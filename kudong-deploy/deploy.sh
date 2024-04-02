@@ -68,7 +68,7 @@ do
     echo "Start Mount....."
     mkdir -p $mountDir;
    
-    sshfs $id@$ip:$hostBaseDir $mountDir;
+    sudo sshfs $id@$ip:$hostBaseDir $mountDir;
     #echo "${hostPassword}" | sshfs $id@$ip:$hostBaseDir $mountDir -o workaround=rename -o password_stdin -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
     #sshfs -o password_stdin $id@$ip:$hostBaseDir $mountDir <<< "${hostPassword}"
     echo "$id@$ip:$hostBaseDir $mountDir";
