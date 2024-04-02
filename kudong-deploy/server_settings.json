@@ -1,0 +1,14 @@
+{
+	"servers":
+	{
+		"lobby":
+		{
+			"host": "test-1",
+			"ram": "4G",
+			"module": 
+			{
+				"kudong-entity-riding.jar" : "/plugins"
+			}
+		}
+	}
+}
