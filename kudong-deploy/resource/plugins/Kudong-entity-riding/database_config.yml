@@ -1,0 +1,8 @@
+database: minecraft
+password: qnstks
+port: 3306
+maxChacheSize: 100
+dbCheckInterval: 10000
+host: localhost
+timeout: 3000
+username: ark
