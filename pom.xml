@@ -10,7 +10,6 @@
 	<version>1.0-SNAPSHOT</version>
 
 	<properties>
-
 		<!-- 기본설정 -->
 		<encoding>UTF-8</encoding>
 		<java.version>17</java.version>

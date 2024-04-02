@@ -113,7 +113,7 @@ do
 
 	mkdir -p $copyTargetDir;
 
-	cp -r -f $currentDir/resource $copyTargetDir;
+	cp -r -f $currentDir/resource/* $copyTargetDir;
 
 
 	for i in $(seq $(echo $settingsJson| jq ".servers.\"${servername}\".module  | keys | length"));
