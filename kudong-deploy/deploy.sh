@@ -97,11 +97,14 @@ do
 	done 
 done
 
+echo "Test1"
+
 for screenName in ${minecraftList[@]};
 do
 	loopCount=0;
 	while true;
 	do
+        echo "Test2"
 		sshResult=$(ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} "ps -ef | grep -E 'java.*${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print \$2}'")
 		
 		pidList=(`echo ${sshResult} | tr " " "\n"`)
@@ -110,7 +113,7 @@ do
 		then
 			break;
 		fi
-		
+		echo "Test3"
 		loopCount=$(($loopCount + 1));
 
 		if [ $loopCount -eq 10 ];
@@ -129,6 +132,8 @@ do
 		
 	done
 done
+
+echo "Test4"
 
 #=====================
 #
