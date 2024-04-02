@@ -85,7 +85,7 @@ echo =====================================
 
 declare -A minecraftList;
 
-for hostname in ${hostIPArr[@]};
+for hostname in ${hostArr[@]};
 do
 	
 	for screenName in $(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -v -E 'grep|java|bash' | grep -E -o "\[([^\[]*)\]" | grep -E "*-minecraft");
@@ -151,9 +151,11 @@ settingsJson=$(cat $currentDir/server_settings.json | jq '.');
 for i in $(seq $(echo $hostJson | jq ' . | keys | length'));
 do
 	index=$(($i - 1));
-    	servername=$(removeDoublequotes $(echo $settingsJson| jq " .servers | keys | .["$index"]"));
+    servername=$(removeDoublequotes $(echo $settingsJson| jq " .servers | keys | .["$index"]"));
 	echo "${servername}"
-	
+    
+	hostname=$(removeDoublequotes $(echo $settingsJson | jq ".servers.\"${servername}\".host "));
+
 	#SET COPY TARGET DIRECTORY 
 	copyTargetDir="${mountedDirList["$hostname"]}/$servername";
 
