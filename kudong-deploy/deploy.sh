@@ -108,8 +108,7 @@ do
 	while true;
 	do
         echo "Test2"
-        hostname="${minecraftList["$screenName"]}"
-        echo "ddd ${minecraftList["$screenName"]}"
+        hostname=$(echo "${minecraftList["$screenName"]}")
         echo "hostname = $hostname"
 
 		sshResult=$(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -E 'java.*${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print $2}')
