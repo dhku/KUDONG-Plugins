@@ -8,7 +8,7 @@ hostJson=$(cat $currentDir/hosts.json | jq '.');
 mountDir=$currentDir/mount;
 buildDir=$currentDir/target;
 
-separationPhrase="-----------------------------------";
+separationPhrase="=====================================";
 
 echo $hostJson;
 
@@ -54,7 +54,7 @@ do
 
         query=".\"$hostname\".\"password\"";
     hostPassword=$(removeDoublequotes $(echo $hostJson | jq $query));
-    echo "hostPassword= $hostPassword"
+    #echo "hostPassword= $hostPassword"
 
     hostPasswordArr["$hostname"]="$hostPassword";
 
@@ -73,15 +73,19 @@ do
     #sshfs -o password_stdin $id@$ip:$hostBaseDir $mountDir <<< "${hostPassword}"
     echo "$id@$ip:$hostBaseDir $mountDir";
     mountedDirList["$hostname"]="$mountDir";
+
+
+    echo "Clean host Base Directory....."
+    rm -rf $mountDir/*;
+
     echo $separationPhrase
 
 done
 
-echo =====================================
 echo
 echo "Closing Server Process Start......"
 echo 
-echo =====================================
+echo $separationPhrase
 
 declare -A minecraftList;
 
@@ -134,11 +138,10 @@ do
 	done
 done
 
-echo =====================================
 echo
 echo       READ server_settings.json
 echo 
-echo =====================================
+echo $separationPhrase
 
 settingsJson=$(cat $currentDir/server_settings.json | jq '.');
 
@@ -171,11 +174,11 @@ do
 	done
 done
 
-echo =====================================
+echo $separationPhrase
 echo
 echo             START SERVER
 echo
-echo =====================================
+echo $separationPhrase
 
 
 for i in $(seq $(echo $hostJson | jq ' . | keys | length'));
@@ -195,11 +198,11 @@ do
     sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ ; screen -dmS \[${servername}-minecraft\] java -Du=${servername}-minecraft -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
 done
 
-echo =====================================
+echo $separationPhrase
 echo
 echo            UNMOUNT SERVER
 echo
-echo =====================================
+echo $separationPhrase
 
 for i in ${mountedDirList[@]}; 
 do 
