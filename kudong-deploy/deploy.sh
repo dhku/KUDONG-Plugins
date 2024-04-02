@@ -113,10 +113,14 @@ do
 		
 		pidList=(`echo ${sshResult} | tr " " "\n"`)
 		
+        echo "sshResult = $sshResult";
+
 		if [ "${#pidList[@]}" == 0 ];
 		then
 			break;
 		fi
+
+        echo "testyyyyyyy1";
 
 		loopCount=$(($loopCount + 1));
 
