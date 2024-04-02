@@ -134,11 +134,11 @@ do
 	done
 done
 
-echo ===========================
+echo =====================================
 echo
-echo  READ server_settings.json
+echo       READ server_settings.json
 echo 
-echo ===========================
+echo =====================================
 
 settingsJson=$(cat $currentDir/server_settings.json | jq '.');
 
@@ -171,11 +171,11 @@ do
 	done
 done
 
-echo =====================
+echo =====================================
 echo
-echo    START SERVER
+echo             START SERVER
 echo
-echo =====================
+echo =====================================
 
 
 for i in $(seq $(echo $hostJson | jq ' . | keys | length'));
@@ -195,11 +195,11 @@ do
     sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} 'cd ${hostBaseArr["$hostname"]}/$servername/ ; screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui';
 done
 
-echo =====================
+echo =====================================
 echo
-echo    UNMOUNT SERVER
+echo            UNMOUNT SERVER
 echo
-echo =====================
+echo =====================================
 
 for i in ${mountedDirList[@]}; 
 do 
