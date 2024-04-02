@@ -108,12 +108,6 @@ do
     	servername=$(removeDoublequotes $(echo $settingsJson| jq " .servers | keys | .["$index"]"));
 	echo "${servername}"
 	
-	hostname=$(removeDoublequotes $(echo $settingsJson | jq ".servers.\"${servername}\".host "));
-	ram=$(removeDoublequotes $(echo $settingsJson | jq ".servers.\"${servername}\".ram "));
-
-	echo "hostname = ${hostname}"
-	echo "ram = ${ram}"
-
 	#SET COPY TARGET DIRECTORY 
 	copyTargetDir="${mountedDirList["$hostname"]}/$servername";
 
@@ -133,13 +127,29 @@ do
 
 		cp -f ../target/${jarName} $copyTargetDir${jarDir};		
 	done
-
-	
-
-
-
 done
 
+#=====================
+#
+#    START SERVER
+#
+#=====================
+
+
+for i in $(seq $(echo $hostJson | jq ' . | keys | length'));
+do
+	index=$(($i - 1));
+    	servername=$(removeDoublequotes $(echo $settingsJson| jq " .servers | keys | .["$index"]"));
+	echo "${servername}"
+
+    hostname=$(removeDoublequotes $(echo $settingsJson | jq ".servers.\"${servername}\".host "));
+	ram=$(removeDoublequotes $(echo $settingsJson | jq ".servers.\"${servername}\".ram "));
+
+	echo "hostname = ${hostname}"
+	echo "ram = ${ram}"
+
+    sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
+done
 
 
 
