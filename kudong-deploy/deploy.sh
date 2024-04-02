@@ -112,15 +112,11 @@ do
 		sshResult=$(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -E 'java -Du=${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print $2}')
 		
 		pidList=(`echo ${sshResult} | tr " " "\n"`)
-		
-        echo "sshResult = $sshResult";
 
 		if [ "${#pidList[@]}" == 0 ];
 		then
 			break;
 		fi
-
-        echo "testyyyyyyy1";
 
 		loopCount=$(($loopCount + 1));
 
