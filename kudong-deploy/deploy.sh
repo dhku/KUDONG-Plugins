@@ -105,8 +105,11 @@ do
 	while true;
 	do
         echo "Test2"
-		sshResult=$(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} ps -ef | grep -E 'java.*${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print \$2}')
+        
+		sshResult=$(sshpass -p ${hostPasswordArr["${minecraftList["$screenName"]}"]} ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} ps -ef | grep -E 'java.*${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print \$2}')
 		
+        echo "sshResult = $sshResult"
+
 		pidList=(`echo ${sshResult} | tr " " "\n"`)
 		
 		if [ "${#pidList[@]}" == 0 ];
@@ -118,8 +121,8 @@ do
 
 		if [ $loopCount -eq 10 ];
 		then
-			sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} kill $pidList;
-			sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} screen -S $screenName -X stuff \"^C\"
+			sshpass -p ${hostPasswordArr["${minecraftList["$screenName"]}"]} ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} kill $pidList;
+			sshpass -p ${hostPasswordArr["${minecraftList["$screenName"]}"]} ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} screen -S $screenName -X stuff \"^C\"
 			echo "pid ${pidList} (${screenName}) killed..";
 
 			break;
