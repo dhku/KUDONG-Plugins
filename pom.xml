@@ -48,6 +48,7 @@
 	<modules>
 		<module>kudong-entity-riding</module>
 		<!-- <module>kudong-entity-nametag</module> -->
+		<!-- <module>kudong-entity-nametag</module> -->
 	</modules>
 
 
