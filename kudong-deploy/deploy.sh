@@ -96,10 +96,8 @@ do
 	do
 		echo "killing ${screenName}'s minecraft server....";
         minecraftList["$screenName"]="$hostname";
-
-        echo "hello ${minecraftList["$screenName"]}";
-
 		sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} screen -S $screenName -X stuff \"^M^Mstop^M\";
+        echo "${screenName}'s minecraft server closed.";
         #ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} screen -S $screenName -X stuff \"^M^Mstop^M\";
 	done 
 done
@@ -119,7 +117,7 @@ do
 		then
 			break;
 		fi
-		echo "Test3"
+
 		loopCount=$(($loopCount + 1));
 
 		if [ $loopCount -eq 10 ];
@@ -138,6 +136,7 @@ do
 	done
 done
 
+echo $separationPhrase
 echo
 echo       READ server_settings.json
 echo 
@@ -149,7 +148,8 @@ for i in $(seq $(echo $hostJson | jq ' . | keys | length'));
 do
 	index=$(($i - 1));
     servername=$(removeDoublequotes $(echo $settingsJson| jq " .servers | keys | .["$index"]"));
-	echo "${servername}"
+
+	#echo "${servername}"
     
 	hostname=$(removeDoublequotes $(echo $settingsJson | jq ".servers.\"${servername}\".host "));
 
