@@ -190,10 +190,9 @@ do
 	echo "hostname = ${hostname}"
 	echo "ram = ${ram}"
 
-    echo "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui"
+    echo "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -Du=${servername}-minecraft -jar -Xms$ram -Xmx$ram -server paper.jar -nogui"
     
     sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ ; screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
-    sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} 'cd ${hostBaseArr["$hostname"]}/$servername/ ; echo $servername';
 done
 
 echo =====================================
