@@ -91,7 +91,8 @@ do
 	for screenName in $(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -v -E 'grep|java|bash' | grep -E -o "\[([^\[]*)\]" | grep -E "*-minecraft");
 	do
 		echo "killing ${screenName}'s minecraft server...."
-		sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} screen -S $screenName -X stuff \"^M^Mstop^M\";
+		#sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} screen -S $screenName -X stuff \"^M^Mstop^M\";
+        ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} screen -S $screenName -X stuff \"^M^Mstop^M\";
 	done 
 done
 
@@ -149,7 +150,7 @@ do
 	echo "hostname = ${hostname}"
 	echo "ram = ${ram}"
     #sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
-    sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
+    ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
 done
 
 #=====================
