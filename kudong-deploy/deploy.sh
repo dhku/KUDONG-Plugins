@@ -151,6 +151,18 @@ do
     sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
 done
 
+#=====================
+#
+#    UNMOUNT SERVER
+#
+#=====================
+
+for i in ${mountedDirList[@]}; 
+do 
+	echo "unmounting $i";
+	umount $i;
+done
+
 
 
 
