@@ -77,23 +77,57 @@ do
 
 done
 
-#=====================
-#
-#close server
-#
-#=====================
-
+echo =====================================
+echo
 echo "Closing Server Process Start......"
+echo 
+echo =====================================
+
+declare -A minecraftList;
 
 for hostName in ${hostIPArr[@]};
 do
 	
 	for screenName in $(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -v -E 'grep|java|bash' | grep -E -o "\[([^\[]*)\]" | grep -E "*-minecraft");
 	do
-		echo "killing ${screenName}'s minecraft server...."
+		echo "killing ${screenName}'s minecraft server....";
 		sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} screen -S $screenName -X stuff \"^M^Mstop^M\";
+        minecraftList["$screenName"]="$hostname";
         #ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} screen -S $screenName -X stuff \"^M^Mstop^M\";
 	done 
+done
+
+for screenName in ${minecraftList[@]};
+do
+	loopCount=0;
+	while true;
+	do
+		sshResult=$(ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} "ps -ef | grep -E 'java.*${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print \$2}'")
+		
+		pidList=(`echo ${sshResult} | tr " " "\n"`)
+		
+		if [ "${#pidList[@]}" == 0 ];
+		then
+			break;
+		fi
+		
+		loopCount=$(($loopCount + 1));
+
+		if [ $loopCount -eq 10 ];
+		then
+			ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} "kill $pidList";
+			
+			ssh ${hostIDList["${minecraftList["$screenName"]}"]}@${hostIPList["${minecraftList["$screenName"]}"]} screen -S $screenName -X stuff \"^C\"
+			echo "pid ${pidList} (${screenName}) killed..";
+
+			break;
+		fi
+		
+		echo "waiting for ${screenName}@${minecraftList["$screenName"]}"
+		echo "[${loopCount}]sleep for 3 Sec, and retry...";
+		sleep 3;
+		
+	done
 done
 
 #=====================
@@ -149,8 +183,11 @@ do
 
 	echo "hostname = ${hostname}"
 	echo "ram = ${ram}"
+
+    echo "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui"
+
     sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
-    #ssh -o StrictHostKeyChecking=no ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
+    
 done
 
 #=====================
