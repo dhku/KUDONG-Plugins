@@ -88,7 +88,7 @@ declare -A minecraftList;
 for hostname in ${hostArr[@]};
 do
 	
-	for screenName in $(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -v -E 'grep|java|bash' | grep -E -o "\[([^\[]*)\]" | grep -E "*-minecraft");
+	for screenName in $(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -E 'grep|java|bash' | grep -E -o "\[([^\[]*)\]" | grep -E "*-minecraft");
 	do
 		echo "killing ${screenName}'s minecraft server....";
         minecraftList["$screenName"]="$hostname";
@@ -107,7 +107,7 @@ do
 	do
         hostname=$(echo "${minecraftList["$screenName"]}")
 
-		sshResult=$(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -E 'java.*${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print $2}')
+		sshResult=$(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -E 'java -Du=${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print $2}')
 		
 		pidList=(`echo ${sshResult} | tr " " "\n"`)
 		
