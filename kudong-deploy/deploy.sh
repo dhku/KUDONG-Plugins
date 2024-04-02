@@ -100,21 +100,15 @@ do
 	done 
 done
 
-echo "Test1"
-
 for screenName in ${!minecraftList[@]};
 do
 	loopCount=0;
 	while true;
 	do
-        echo "Test2"
         hostname=$(echo "${minecraftList["$screenName"]}")
-        echo "hostname = $hostname"
 
 		sshResult=$(sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} ps -ef | grep -E 'java.*${screenName:1:-1}' | grep -v -E 'grep|SCREEN|bash' | awk '{print $2}')
 		
-        echo "sshResult = $sshResult"
-
 		pidList=(`echo ${sshResult} | tr " " "\n"`)
 		
 		if [ "${#pidList[@]}" == 0 ];
@@ -139,8 +133,6 @@ do
 		
 	done
 done
-
-echo "Test4"
 
 #=====================
 #
@@ -200,7 +192,7 @@ do
 
     echo "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui"
 
-    sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui;
+    sshpass -p ${hostPasswordArr["$hostname"]} ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS [${servername}-minecraft] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui;
     #ssh ${hostIDArr["$hostname"]}@${hostIPArr["$hostname"]} "cd ${hostBaseArr["$hostname"]}/$servername/ && screen -dmS \[${servername}-minecraft\] java -jar -Xms$ram -Xmx$ram -server paper.jar -nogui";
 done
 
