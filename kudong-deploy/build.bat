@@ -5,9 +5,9 @@ cd ..
 
 echo Maven Build Start........
 
-CALL mvn clean -pl kudong-entity-riding -am install
+:CALL mvn clean -pl kudong-entity-riding -am install
 
-:CALL mvn clean install
+CALL mvn clean install
 
 echo Maven Build Complete!
 
@@ -24,10 +24,10 @@ set serverDir=E:\SERVER 1.20.4
 echo Copy %projectName% Plugin.....
 copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
 
-:set projectName=kudong-entity-nametag
+set projectName=kudong-framework
 
-:echo Copy %projectName% Plugin.....
-:copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
+echo Copy %projectName% Plugin.....
+copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
 
 
 E:
