@@ -4,6 +4,7 @@ author: KUDONG
 description: ${description}
 api-version: ${bukkit-api.version}
 main: kr.kudong.entity.RidingCore
+depend: [Kudong-framework]
 commands:
     ride:
       aliases: [탈것,탈,xkfrjt,xkf]

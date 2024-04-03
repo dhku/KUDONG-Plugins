@@ -14,12 +14,12 @@ import java.util.logging.Logger;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import kr.kudong.common.basic.db.DBAccess;
 import kr.kudong.entity.RidingCore;
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.data.RidingPlayerMap;
 import kr.kudong.entity.data.RidingPlayerSetting;
 import kr.kudong.entity.data.SteerablePreset;
-import kr.kudong.entity.util.DBAccess;
 
 public class RidingService
 {

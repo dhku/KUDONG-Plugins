@@ -1,0 +1,8 @@
+name: Kudong-framework
+version: ${version}
+author: KUDONG
+description: ${description}
+api-version: ${bukkit-api.version}
+main: kr.kudong.framework.FrameworkCore
+commands:
+    kudong:

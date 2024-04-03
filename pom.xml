@@ -46,12 +46,11 @@
 	</properties>
 
 	<modules>
+		<module>kudong-common</module>
+		<module>kudong-framework</module>
 		<module>kudong-entity-riding</module>
-		<!-- <module>kudong-entity-nametag</module> -->
-		<!-- <module>kudong-entity-nametag</module> -->
 	</modules>
-
-
+	
 	<repositories>
 		<repository>
 			<id>minecraft-libraries</id>

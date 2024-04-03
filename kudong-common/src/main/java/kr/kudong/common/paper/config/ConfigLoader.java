@@ -1,4 +1,4 @@
-package kr.kudong.entity.util;
+package kr.kudong.common.paper.config;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

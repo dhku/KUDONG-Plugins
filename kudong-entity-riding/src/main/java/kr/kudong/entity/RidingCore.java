@@ -6,19 +6,18 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.earth2me.essentials.IEssentials;
-
+import kr.kudong.common.basic.db.DBAccess;
+import kr.kudong.common.paper.config.ConfigLoader;
 import kr.kudong.entity.command.CommandManager;
 import kr.kudong.entity.controller.RidingManager;
 import kr.kudong.entity.db.RidingService;
 import kr.kudong.entity.db.SQLSchema;
-import kr.kudong.entity.util.ConfigLoader;
-import kr.kudong.entity.util.DBAccess;
-
+import kr.kudong.framework.FrameworkCore;
 import net.milkbowl.vault.economy.Economy;
 
 
@@ -39,12 +38,12 @@ public class RidingCore extends JavaPlugin
 		/**
 		 * 디펜던시 로드
 		 */
-		this.logger = this.getLogger();
-		this.dbAccess = new DBAccess(logger);
-		this.configLoader = new ConfigLoader(this, this.logger);
-		
+		if(!this.setupFramework()) return;
 		if(!this.setupEconomy()) return;
 
+		this.logger = this.getLogger();
+		this.configLoader = new ConfigLoader(this, this.logger);
+	
 		/**
 		 * 컨트롤러
 		 */
@@ -63,7 +62,7 @@ public class RidingCore extends JavaPlugin
 		 */
 		this.registerConfig();
 		this.registerEventListener();
-		this.dbAccess.start();
+		
 		
 		this.dbAccess.simpleAsyncExecute(SQLSchema.RidingTable);
 		this.dbAccess.simpleAsyncExecute(SQLSchema.RidingPlayerTable);
@@ -75,7 +74,6 @@ public class RidingCore extends JavaPlugin
 	@Override
 	public void onDisable()
 	{
-		this.dbAccess.stop();
 		this.clearData();
 		this.logger.log(Level.INFO, "Kudong-Entity-Riding 플러그인이 성공적으로 비활성화 되었습니다!");
 	}
@@ -106,7 +104,6 @@ public class RidingCore extends JavaPlugin
 	private void registerConfig()
 	{
 		this.configLoader.registerModule("riding", ridingManager.getConfig());
-		this.configLoader.registerModule("database", this.dbAccess);
 		this.configLoader.loadConfig();
 	}
 
@@ -117,7 +114,22 @@ public class RidingCore extends JavaPlugin
 		this.pluginManager.registerEvents(ridingManager.getGuiListener(),this);
 	}
 	
-    private boolean setupEconomy() {
+    private boolean setupFramework() 
+    {
+        if (getServer().getPluginManager().getPlugin("Kudong-framework") == null) 
+        {
+        	this.logger.log(Level.SEVERE, "Kudong-framework 디펜던시가 발견되지않았기에 플러그인이 비활성화 되었습니다!");
+        	getServer().getPluginManager().disablePlugin(this);
+            return false;
+        }
+        
+		Plugin core =  Bukkit.getPluginManager().getPlugin("Kudong-framework");
+		this.dbAccess = ((FrameworkCore)core).getDBAccess();
+        return true;
+    }
+	
+    private boolean setupEconomy() 
+    {
    
         if (getServer().getPluginManager().getPlugin("Vault") == null) 
         {
