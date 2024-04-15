@@ -11,9 +11,13 @@ import kr.kudong.common.basic.db.DBAccess;
 import kr.kudong.common.paper.config.ConfigLoader;
 import kr.kudong.framework.command.CommandManager;
 import kr.kudong.framework.listener.FrameworkListener;
+import kr.kudong.framework.reflection.ReflectionService;
 
 public class FrameworkCore extends JavaPlugin
 {
+	private static JavaPlugin plugin;
+	private static ReflectionService reflect;
+	
 	private Logger logger;
 	private ConfigLoader configLoader;
 	private FrameworkListener listener;
@@ -25,7 +29,7 @@ public class FrameworkCore extends JavaPlugin
 	public void onEnable()
 	{
 		FrameworkCore.plugin = this;
-
+		FrameworkCore.reflect = new ReflectionService(this.logger, this);
 		/**
 		 * 디펜던시 로드
 		 */
@@ -46,7 +50,7 @@ public class FrameworkCore extends JavaPlugin
 	{
 		return this.dbAccess;
 	}
-	
+
 	@Override
 	public void onDisable()
 	{
@@ -65,7 +69,5 @@ public class FrameworkCore extends JavaPlugin
 		this.configLoader.registerModule("database", this.dbAccess);
 		this.configLoader.loadConfig();
 	}
-	
-	private static JavaPlugin plugin;
-	
+
 }

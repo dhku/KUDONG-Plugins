@@ -21,7 +21,12 @@
 	        <id>jitpack.io</id>
 	        <url>https://jitpack.io</url>
 	    </repository>
-	    
+
+    	<repository>
+			<id>local-repo</id>
+			<name>localrepo</name>
+			<url>file://${project.parent.basedir}/lib</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -59,6 +64,13 @@
 	        <scope>provided</scope>
     	</dependency>
    
+		<dependency>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot</artifactId>
+            <version>1.20.4-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+		
 	</dependencies>
 
 	<build>
