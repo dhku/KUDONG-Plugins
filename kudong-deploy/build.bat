@@ -29,6 +29,11 @@ set projectName=kudong-framework
 echo Copy %projectName% Plugin.....
 copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
 
+set projectName=kudong-towny-dynmap
+
+echo Copy %projectName% Plugin.....
+copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
+
 
 E:
 cd E:\SERVER 1.20.4

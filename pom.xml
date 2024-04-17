@@ -49,6 +49,7 @@
 		<module>kudong-common</module>
 		<module>kudong-framework</module>
 		<module>kudong-entity-riding</module>
+		<module>kudong-towny-dynmap</module>
 	</modules>
 	
 	<repositories>
