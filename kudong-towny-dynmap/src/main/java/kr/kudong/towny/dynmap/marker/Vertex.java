@@ -3,7 +3,7 @@ package kr.kudong.towny.dynmap.marker;
 import java.io.Serializable;
 import org.bukkit.util.Vector;
 
-public class Vertex implements Serializable
+public class Vertex implements Serializable , Comparable<Vertex>
 {
 	protected int X;
 	protected int Z;
@@ -107,6 +107,26 @@ public class Vertex implements Serializable
 	
 	private int cnt = 1;
 	private static final long serialVersionUID = 7860750531888537284L;
+
+	@Override
+	public int compareTo(Vertex o)
+	{
+		if(this.X < o.X)
+			 return -1;
+		else if(this.X > o.X)
+		{
+			return 1;
+		}
+		else
+		{
+			if(this.Z < o.Z)
+				return -1;
+			else if (this.Z > o.Z)
+				return 1;
+			else
+				return 0;
+		}
+	}
 	
 //	public static void main(String[] args)
 //	{

@@ -1,6 +1,7 @@
 package kr.kudong.towny.dynmap.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -208,6 +209,7 @@ public class TownyDynmapManager
 		    }
 		}
 
+
 		//===========================================================
 		
 		for(List<Vertex> area :areaList)
@@ -217,6 +219,8 @@ public class TownyDynmapManager
 
 			// 겹치는 점들을 포함해서 각 점마다의 교점 갯수를 카운팅합니다.
 			//==================================================
+			
+			Collections.sort(area);
 			
 			for(Vertex v : area)
 			{
@@ -236,18 +240,6 @@ public class TownyDynmapManager
 				offsetList2.add(new Vector(x + 16, 0, z)); 	
 				offsetList2.add(new Vector(x + 16, 0, z + 16)); 		
 				offsetList2.add(new Vector(x, 0, z + 16)); 			
-				
-				
-//				offsetList.add(new Vertex(x , z - 16)); 	//v2
-//				offsetList.add(new Vertex(x + 16 ,z - 16)); //v1
-//				offsetList.add(new Vertex(x + 16, z)); 		//v4
-//				offsetList.add(new Vertex(x, z)); 			//v3
-//				
-//				List<Vector> offsetList2 = new ArrayList<>(); 
-//				offsetList2.add(new Vector(x ,0, z - 16)); 		//v2
-//				offsetList2.add(new Vector(x + 16 ,0,z - 16)); 	//v1
-//				offsetList2.add(new Vector(x + 16,0, z)); 		//v4
-//				offsetList2.add(new Vector(x,0, z)); 			//v3
 				
 				checkPoly.add(offsetList2);
 
@@ -275,6 +267,7 @@ public class TownyDynmapManager
 			visited2.add(start);
 			points.add(new Vector(start.getX(),0,start.getZ()));
 			
+			this.logger.log(Level.INFO, "스타트:"+start.getX()/16+"/"+start.getZ()/16);
 			
 		    while(!q.isEmpty())
 		    {
@@ -301,10 +294,9 @@ public class TownyDynmapManager
 						//이미 방문한 점은 패스합니다.
 						if(v1.equals(v2) || visited2.contains(v2)) continue;
 						//다음 방문할 점과 현재 점에서의 교점의수가 2이상 3이하 일때 위치를 확인합니다. 
-				    	if((2 <= cnt1 && cnt1 <=3) && (2 <= cnt2 && cnt2 <=3)) 
+				    	if((1 <= cnt1 && cnt1 <=3) && (1 <= cnt2 && cnt2 <=3)) 
 				    	{
 				    		Vector vec = new Vector((v2.getX()-v1.getX())/2,0,(v2.getZ()-v1.getZ())/2);
-				    		
 				    		
 				    		int count = 0;
 				    		
@@ -327,8 +319,9 @@ public class TownyDynmapManager
 				    		}
 				    		
 				    		//양쪽다 포함되어있으면 (count == 2) 내부에 있는 것으로 패스합니다.
-				    		if(count == 2) 
+				    		if(count == 2 || count == 0) 
 				    		{
+				    			this.logger.log(Level.INFO, "양쪽다 포함 count == 2");
 				    			continue;
 				    		}
 				    		else
@@ -336,6 +329,7 @@ public class TownyDynmapManager
 					    		q.add(v2);
 					    		visited2.add(v2);
 					    		points.add(new Vector(v2.getX(),0,v2.getZ()));
+					    		this.logger.log(Level.INFO, "포인트:"+v2.getX()/16+"/"+v2.getZ()/16);
 					    		break;
 				    		}
 				    	}
@@ -348,6 +342,7 @@ public class TownyDynmapManager
 				    		q.add(v2);
 				    		visited2.add(v2);
 				    		points.add(new Vector(v2.getX(),0,v2.getZ()));
+				    		this.logger.log(Level.INFO, "포인트:"+v2.getX()/16+"/"+v2.getZ()/16);
 				    		break;
 				    	}
 					}
