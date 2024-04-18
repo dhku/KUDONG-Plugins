@@ -1,8 +1,10 @@
 package kr.kudong.towny.dynmap.command;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -10,6 +12,8 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import kr.cosine.towny.api.TownyAPI;
+import kr.cosine.towny.data.TownyChunk;
 import kr.kudong.towny.dynmap.controller.TownyDynmapManager;
 
 public class CommandManager implements CommandExecutor
@@ -36,12 +40,33 @@ public class CommandManager implements CommandExecutor
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
 	{
 		Player p = (Player) sender;
+
+		if(args.length == 0) 
+		{
+			List<TownyChunk> c2 = manager.towny.getPlayerTownyChunks(p.getUniqueId());
+			
+			for(TownyChunk c1 : c2)
+			{
+				this.logger.log(Level.INFO, "땅 청크>"+c1.getX()+"/"+c1.getZ());
+			}
+			
+			this.logger.log(Level.INFO, "===========================");
+
+			Bukkit.getServer().dispatchCommand(sender, "땅 구매");
+			
+			List<TownyChunk> c = manager.towny.getPlayerTownyChunks(p.getUniqueId());
+			
+			this.logger.log(Level.INFO, "===========================");
+			
+			for(TownyChunk c1 : c)
+			{
+				this.logger.log(Level.INFO, "땅 청크>"+c1.getX()+"/"+c1.getZ());
+			}
+
+			return true;
+		}
 		
-//		if(args.length == 0) 
-//		{
-//			new RidingMainGUI(p).openGUI();
-//			return true;
-//		}
+		
 //		
 //		if(args[0].equalsIgnoreCase("도움말") || args[0].equalsIgnoreCase("help"))
 //		{

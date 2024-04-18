@@ -1,5 +1,6 @@
 package kr.kudong.towny.dynmap.listener;
 
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import kr.cosine.towny.data.TownyChunk;
 import kr.cosine.towny.event.TownyChunkCreateEvent;
 import kr.cosine.towny.event.TownyChunkDeleteEvent;
 import kr.kudong.towny.dynmap.controller.TownyDynmapManager;
+import kr.kudong.towny.dynmap.controller.TownyDynmapPlayer;
 
 
 
@@ -37,24 +39,37 @@ public class TownyDynmapListener implements Listener
 	@EventHandler
 	public void onCreateTownyChunk(TownyChunkCreateEvent e)
 	{
-		Player player = e.getPlayer();
+		Player p = e.getPlayer();
+		UUID uuid = p.getUniqueId();
 		
-		
-		
+		if(manager.containsTownyDynmapPlayer(uuid))
+		{
+			TownyDynmapPlayer player = manager.getTownyDynmapPlayer(uuid);
+			player.clearMarker();
+			manager.loadPlayerTownyChunks(player);
+			manager.drawPlayerTownyChunks(player);
+		}
+		else
+		{
+			TownyDynmapPlayer player = new TownyDynmapPlayer(p);
+			manager.loadPlayerTownyChunks(player);
+			manager.drawPlayerTownyChunks(player);
+		}
 	}
 	
 	@EventHandler
 	public void onDeleteTownyChunk(TownyChunkDeleteEvent e)
 	{
-		Player player = e.getPlayer();
-		TownyChunk c = e.getTownyChunk();
+		Player p = e.getPlayer();
+		UUID uuid = p.getUniqueId();
 		
-
-		
-		api.getPlayerTownyChunks(player);
-		
-		
-		
+		if(manager.containsTownyDynmapPlayer(uuid))
+		{
+			TownyDynmapPlayer player = manager.getTownyDynmapPlayer(uuid);
+			player.clearMarker();
+			manager.loadPlayerTownyChunks(player);
+			manager.drawPlayerTownyChunks(player);
+		}
 	}
 	
 	@EventHandler

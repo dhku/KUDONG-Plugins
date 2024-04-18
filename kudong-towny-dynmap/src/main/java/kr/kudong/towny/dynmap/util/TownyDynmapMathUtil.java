@@ -58,20 +58,20 @@ public class TownyDynmapMathUtil
 			Vector dir = v2.clone().subtract(v1);
 			dir.normalize().multiply(2);
 			if(wn_PnPoly(v2.clone().add(dir),points) != 0 ) {
-				Bukkit.getLogger().log(Level.INFO, "[DEBUG] 오목한 다각형이 감지되었습니다.");
+				//Bukkit.getLogger().log(Level.INFO, "[DEBUG] 오목한 다각형이 감지되었습니다.");
 				continue;
 			}
 
 			int result = ccw(v1.getBlockX(), v1.getBlockZ(),v2.getBlockX(), v2.getBlockZ(), v3.getBlockX(), v3.getBlockZ());
 			
 			if(result == 0) { //일직선이면
-				Bukkit.getLogger().log(Level.INFO, "[DEBUG] 일직선이 검출되었습니다.");
+				//Bukkit.getLogger().log(Level.INFO, "[DEBUG] 일직선이 검출되었습니다.");
 				continue;
 			}else if(result > 0) { //시계방향이면 ok
-				Bukkit.getLogger().log(Level.INFO, "[DEBUG] 정상입니다.");
+				//Bukkit.getLogger().log(Level.INFO, "[DEBUG] 정상입니다.");
 				return;
 			}else { //반시계방향 
-				Bukkit.getLogger().log(Level.INFO, "[DEBUG] 반시계가 검출되었습니다.");
+				//Bukkit.getLogger().log(Level.INFO, "[DEBUG] 반시계가 검출되었습니다.");
 				Collections.reverse(points);
 				return;
 			}

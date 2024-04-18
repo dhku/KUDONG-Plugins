@@ -22,9 +22,11 @@ public class DivisionAreaMarker implements IDivisionMarker
 	private AreaMarker areaMarker;
 	private List<Vector> points;
 	private String world;
+	private String name;
 	
-	public DivisionAreaMarker(List<Vector> points, String world, MarkerSet mark,MarkerAPI markerapi)
+	public DivisionAreaMarker(String name,List<Vector> points, String world, MarkerSet mark,MarkerAPI markerapi)
 	{
+		this.name = name;
 		this.points = points;
 		this.mark = mark;
 		this.markerapi = markerapi;
@@ -35,21 +37,22 @@ public class DivisionAreaMarker implements IDivisionMarker
 	@Override
 	public void drawPaint()
 	{
+		if(this.areaMarker != null) this.areaMarker.deleteMarker();
+		if(this.iconMarker != null) this.iconMarker.deleteMarker();
+		
 		MarkerIcon icon1 = this.markerapi.getMarkerIcon("house");
 		MarkerIcon icon2 = this.markerapi.getMarkerIcon("pin");
 		
 		Vector center = TownyDynmapMathUtil.getCenterLocation(points);
-		
+
 		double[] a = {0};
 		double[] b = {0};
-
-		this.areaMarker = this.mark.createAreaMarker("town_1"+UUID.randomUUID(), "towny" , false, world, a, b, true);
 		
+		this.areaMarker = this.mark.createAreaMarker("town_"+UUID.randomUUID(), "소유주\n["+name+"]" , false, world, a, b, true);
 
-		
 		if(this.areaMarker != null)
 		{
-			this.iconMarker = this.mark.createMarker("center"+UUID.randomUUID(),  "towny" , false, world, center.getX(), 0, center.getZ(),
+			this.iconMarker = this.mark.createMarker("center_"+UUID.randomUUID(),  "소유주\n["+name+"]" , false, world, center.getX(), 0, center.getZ(),
 					icon1, false);
 			
 			areaMarker.deleteCorner(0);
@@ -60,7 +63,7 @@ public class DivisionAreaMarker implements IDivisionMarker
 			{
 				areaMarker.setCornerLocation(count, v.getX(), v.getZ());
 				this.pinMarker.add(this.mark.createMarker(v.getX()+"_"+v.getZ()
-				, "좌표:"+v.getX()/16+"_"+v.getZ()/16
+				, "좌표:"+(int)(v.getX()/16)+"_"+(int)(v.getZ()/16)
 				, false
 				, world 
 				, v.getX()
