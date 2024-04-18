@@ -272,12 +272,14 @@ public class TownyDynmapManager
 		    while(!q.isEmpty())
 		    {
 		    	Vertex v1 = q.poll();
-		    	
+
 		    	int cnt1 = v1.getCnt();
 		    	
 		    	//시계 방향으로 검사합니다 (위 오른쪽 아래 왼쪽 순)
 				int dx[] = new int[]{ 0,16,0,-16 };
 				int dz[] = new int[]{ -16,0,16,0 };
+				
+				List<Vertex> select = new ArrayList<>();
 				
 		        for(int i=0 ; i<4 ; i++)
 		        {
@@ -291,63 +293,46 @@ public class TownyDynmapManager
 						Vertex v2 = coordinate.get(findIndex);
 						int cnt2 = v2.getCnt();
 						
-						//이미 방문한 점은 패스합니다.
-						if(v1.equals(v2) || visited2.contains(v2)) continue;
-						//다음 방문할 점과 현재 점에서의 교점의수가 2이상 3이하 일때 위치를 확인합니다. 
-				    	if((1 <= cnt1 && cnt1 <=3) && (1 <= cnt2 && cnt2 <=3)) 
-				    	{
-				    		Vector vec = new Vector((v2.getX()-v1.getX())/2,0,(v2.getZ()-v1.getZ())/2);
-				    		
-				    		int count = 0;
-				    		
-				    		//(v1,v2) 직선이 내부에 포함되어있는지 확인합니다.
-				    		//vec 벡터의 절반을 45,-45로 회전시켜 판별합니다.
-				    		Vector vec1 = TownyDynmapMathUtil.rotateAroundAxisY(vec.clone(), 45);
-				    		vec1.add(new Vector(v1.getX(),0,v1.getZ()));
-				    		Vector vec2 = TownyDynmapMathUtil.rotateAroundAxisY(vec.clone(), -45);
-				    		vec2.add(new Vector(v1.getX(),0,v1.getZ()));
-				    		
-				    		for(List<Vector> check : checkPoly)
-				    		{
-				    			if(TownyDynmapMathUtil.wn_PnPoly(vec1, check) == 1)
-				    				count++;
-				    			
-				    			if(TownyDynmapMathUtil.wn_PnPoly(vec2, check) == 1)
-				    				count++;
-				    			
-				    			if(count == 2) break;
-				    		}
-				    		
-				    		//양쪽다 포함되어있으면 (count == 2) 내부에 있는 것으로 패스합니다.
-				    		if(count == 2 || count == 0) 
-				    		{
-				    			this.logger.log(Level.INFO, "양쪽다 포함 count == 2");
-				    			continue;
-				    		}
-				    		else
-				    		{
-					    		q.add(v2);
-					    		visited2.add(v2);
-					    		points.add(new Vector(v2.getX(),0,v2.getZ()));
-					    		this.logger.log(Level.INFO, "포인트:"+v2.getX()/16+"/"+v2.getZ()/16);
-					    		break;
-				    		}
-				    	}
-				    	else if((cnt1 >= 2 && cnt2 >= 2))
-				    	{
-				    		continue;
-				    	}
-				    	else
-				    	{
-				    		q.add(v2);
-				    		visited2.add(v2);
-				    		points.add(new Vector(v2.getX(),0,v2.getZ()));
-				    		this.logger.log(Level.INFO, "포인트:"+v2.getX()/16+"/"+v2.getZ()/16);
-				    		break;
-				    	}
+						//도착지에 도달했으면 끝
+						if(v2.equals(start)) break;
+						
+			    		Vector vec = new Vector((v2.getX()-v1.getX())/2,0,(v2.getZ()-v1.getZ())/2);
+			    		
+			    		int left = 0;
+			    		int right = 0;
+			    		
+			    		//(v1,v2) 직선이 내부에 포함되어있는지 확인합니다.
+			    		//vec 벡터의 절반을 45,-45로 회전시켜 판별합니다.
+			    		Vector vec1 = TownyDynmapMathUtil.rotateAroundAxisY(vec.clone(), 45);
+			    		vec1.add(new Vector(v1.getX(),0,v1.getZ()));
+			    		Vector vec2 = TownyDynmapMathUtil.rotateAroundAxisY(vec.clone(), -45);
+			    		vec2.add(new Vector(v1.getX(),0,v1.getZ()));
+			    		
+			    		for(List<Vector> check : checkPoly)
+			    		{
+			    			if(TownyDynmapMathUtil.wn_PnPoly(vec1, check) == 1)
+			    				left = 1;
+			    			
+			    			if(TownyDynmapMathUtil.wn_PnPoly(vec2, check) == 1)
+			    				right = 1;
+			    		}
+			    	
+			    		if(left == 0 && right == 1) 
+			    		{
+			    			select.add(v2);
+			    		}
 					}
 		        }
-
+		        
+		        for(Vertex v2 : select)
+		        {
+	    			if((select.size() == 2) && visited2.contains(v2)) continue;
+			    	q.add(v2);
+			    	visited2.add(v2);
+			    	points.add(new Vector(v2.getX(),0,v2.getZ()));
+			    	this.logger.log(Level.INFO, "포인트:"+v2.getX()/16+"/"+v2.getZ()/16);
+			    	break;
+		        }
 		    }
 		    
 		    //points를 시계방향으로 정렬합니다. 
