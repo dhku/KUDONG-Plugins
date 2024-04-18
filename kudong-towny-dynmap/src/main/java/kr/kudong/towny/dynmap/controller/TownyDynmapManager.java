@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.dynmap.DynmapCommonAPI;
@@ -70,17 +71,18 @@ public class TownyDynmapManager
 	
 	public void loadTownyChunks()
 	{
-		this.logger.log(Level.INFO, "Start loading Player Towny Chunks in Dynmap....");
-		
+		this.logger.log(Level.INFO, "Start loading Towny Chunks in Dynmap....");
+		long beforeTime = System.currentTimeMillis();
 		for(OfflinePlayer p : Bukkit.getOfflinePlayers())
 		{
-			this.logger.log(Level.INFO, "플레이어 네임:"+ p.getName());
 			UUID playerUUID = p.getUniqueId();
 			TownyDynmapPlayer player = new TownyDynmapPlayer(p.getName(),playerUUID);
 			this.map.put(playerUUID, player);
 			this.loadPlayerTownyChunks(player);
 		}
-		
+		long afterTime = System.currentTimeMillis(); 
+		long secDiffTime = afterTime - beforeTime; 
+		this.logger.log(Level.INFO, "Load Complete Towny Chunks in Dynmap! (" + secDiffTime+"ms)");
 		this.drawAllPlayerTownyChunks();
 	}
 	
@@ -89,30 +91,49 @@ public class TownyDynmapManager
 		for(TownyDynmapPlayer player : map.values())
 		{
 			player.clearMarker();
-		}
-		
+		}	
 		this.map.clear();
 		this.loadTownyChunks();
 	}
 	
 	public void loadPlayerTownyChunks(TownyDynmapPlayer player)
 	{
-//		long beforeTime = System.currentTimeMillis();
-
-		List<List<Vector>> result = this.calculatePlayerTownyChunks(player.getUuid());
-
-//		long afterTime = System.currentTimeMillis(); 
-//		
-//		long secDiffTime = afterTime - beforeTime; 
-//		this.logger.log(Level.INFO,"시간차이(ms) : "+secDiffTime);	
-
-		for(List<Vector> v : result)
+		List<TownyChunk> chunks = this.towny.getPlayerTownyChunks(player.getUuid());
+		
+		if(chunks.isEmpty()) return;
+		
+		for(World w : Bukkit.getWorlds())
 		{
-			DivisionAreaMarker marker = new DivisionAreaMarker(player.getName(),v, "world", mark, markerapi);
-			player.addMarker(marker);
+			String world = w.getName();
+			List<Vertex> chunkList = this.convertChunktoVertex(chunks,world); 
+			List<List<Vector>> result = this.calculatePlayerTownyChunks(chunkList,player.getUuid(),world);
+			
+			for(List<Vector> v : result)
+			{
+				DivisionAreaMarker marker = new DivisionAreaMarker(player.getName(),v, world, mark, markerapi);
+				player.addMarker(marker);
+			}
 		}
 	}
 	
+	private List<Vertex> convertChunktoVertex(List<TownyChunk> chunks, String world)
+	{
+		List<Vertex> chunkList = new ArrayList<>(); 
+		
+		for(TownyChunk c : chunks)
+		{
+			int chunkX = c.getX();
+			int chunkZ = c.getZ();
+			
+			if(!c.getWorldName().equals(world)) continue;
+			
+			chunkList.add(new Vertex(chunkX, chunkZ));
+			//this.logger.log(Level.INFO, "청크:" + chunkX + "/ "+chunkZ);
+		}
+		
+		return chunkList;
+	}
+
 	public void drawAllPlayerTownyChunks()
 	{
 		Bukkit.getServer().getScheduler().runTaskLaterAsynchronously(plugin, ()->{
@@ -137,29 +158,9 @@ public class TownyDynmapManager
 	 * @param playerUUID
 	 * @return
 	 */
-	private List<List<Vector>> calculatePlayerTownyChunks(UUID playerUUID)
+	private List<List<Vector>> calculatePlayerTownyChunks(List<Vertex> chunkList, UUID playerUUID, String world)
 	{
 		List<List<Vector>> result = new ArrayList<>();
-		
-		List<TownyChunk> chunks = this.towny.getPlayerTownyChunks(playerUUID);
-		
-		if(chunks.isEmpty()) return result;
-		
-		//=====================================
-		
-		List<Vertex> chunkList = new ArrayList<>(); 
-		
-		for(TownyChunk c : chunks)
-		{
-			int chunkX = c.getX();
-			int chunkZ = c.getZ();
-			
-			if(!c.getWorldName().equals("world")) continue;
-			
-			chunkList.add(new Vertex(chunkX, chunkZ));
-			//this.logger.log(Level.INFO, "청크:" + chunkX + "/ "+chunkZ);
-		}
-		
 		
 		//======================================
 		//각플레이어가 가지고있는 구역을 구분합니다.
@@ -267,13 +268,11 @@ public class TownyDynmapManager
 			visited2.add(start);
 			points.add(new Vector(start.getX(),0,start.getZ()));
 			
-			this.logger.log(Level.INFO, "스타트:"+start.getX()/16+"/"+start.getZ()/16);
+			//this.logger.log(Level.INFO, "스타트:"+start.getX()/16+"/"+start.getZ()/16);
 			
 		    while(!q.isEmpty())
 		    {
 		    	Vertex v1 = q.poll();
-
-		    	int cnt1 = v1.getCnt();
 		    	
 		    	//시계 방향으로 검사합니다 (위 오른쪽 아래 왼쪽 순)
 				int dx[] = new int[]{ 0,16,0,-16 };
@@ -291,7 +290,6 @@ public class TownyDynmapManager
 					else
 					{
 						Vertex v2 = coordinate.get(findIndex);
-						int cnt2 = v2.getCnt();
 						
 						//도착지에 도달했으면 끝
 						if(v2.equals(start)) break;
@@ -330,7 +328,7 @@ public class TownyDynmapManager
 			    	q.add(v2);
 			    	visited2.add(v2);
 			    	points.add(new Vector(v2.getX(),0,v2.getZ()));
-			    	this.logger.log(Level.INFO, "포인트:"+v2.getX()/16+"/"+v2.getZ()/16);
+			    	//this.logger.log(Level.INFO, "포인트:"+v2.getX()/16+"/"+v2.getZ()/16);
 			    	break;
 		        }
 		    }
