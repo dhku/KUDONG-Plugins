@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
-import kr.kudong.entity.gui.GUI;
+import kr.kudong.entity.gui.RidingGUI;
 
 public class GUIEventListener implements Listener
 {
@@ -14,19 +14,19 @@ public class GUIEventListener implements Listener
 	public void guiClicked(InventoryClickEvent e)
 	{
 		Player p = (Player)e.getWhoClicked();
-		GUI gui = GUI.getGUI(p);
-		if(gui == null) return;
+		RidingGUI ridingGUI = RidingGUI.getGUI(p);
+		if(ridingGUI == null) return;
 
-		gui.clickEvent(e);
+		ridingGUI.clickEvent(e);
 	}
 
 	@EventHandler
 	public void guiClose(InventoryCloseEvent e)
 	{
 		Player p = (Player)e.getPlayer();
-		GUI gui = GUI.getGUI(p);
-		if(gui == null) return;
-		gui.closeEvent(e);
-		gui.closeGUI();
+		RidingGUI ridingGUI = RidingGUI.getGUI(p);
+		if(ridingGUI == null) return;
+		ridingGUI.closeEvent(e);
+		ridingGUI.closeGUI();
 	}
 }

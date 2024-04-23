@@ -73,8 +73,14 @@ public class SteerableEntity
 		float forward = state.getForward();
 		float sidewalks = state.getSidewalks();
 		boolean isShift = state.isShift();
+		boolean isSpaceBar = state.isSpacebar();
 		
-		if(forward > 0)
+		if(isSpaceBar)
+		{
+			this.velocity += -this.preset.ACCELERATION_RATE * 1.2;
+		}
+	
+		if(forward > 0 && sidewalks == 0)
 		{
 			if(isShift)
 			{
@@ -100,25 +106,38 @@ public class SteerableEntity
 						this.velocity = this.preset.FORWARD_DEFAULT_MAXSPEED;
 				}	
 			}
-		}
-		else if(forward < 0)
-		{
-			if(this.velocity > 0.0f)
-				this.velocity += -0.1f; //브레이크
-			else
-				this.velocity += -this.preset.DECELERATION_RATE;
-			
-			if(this.velocity < -0.4f)
-				this.velocity = -0.3f;
-		}
-		else
-		{
-			this.velocity += -0.1f;
 			
 			if(this.velocity < 0.0f)
 				this.velocity = 0.0f;
 		}
-
+		else if(forward < 0)
+		{
+			if(this.velocity > 0.0f)
+			{
+				this.velocity += -0.05f;
+			}
+			else
+			{
+				this.velocity += -this.preset.DECELERATION_RATE;
+			}
+			if(this.velocity < -0.4f)
+				this.velocity = -0.3f;
+			
+		}else if(sidewalks != 0)
+		{
+			this.velocity += -0.02f;
+			
+			if(this.velocity < 0.0f)
+				this.velocity = 0.0f;
+		}
+		else
+		{
+			this.velocity += -0.05f;
+			
+			if(this.velocity < 0.0f)
+				this.velocity = 0.0f;
+		}
+		
 		if(isCasualMode == false)
 		{
 			if(sidewalks < 0)

@@ -1,4 +1,4 @@
-package kr.kudong.entity.gui;
+package kr.kudong.framework.gui;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +21,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import kr.kudong.entity.RidingCore;
-import kr.kudong.entity.controller.RidingManager;
+import kr.kudong.framework.FrameworkCore;
 
 public abstract class GUI
 {
@@ -31,14 +30,12 @@ public abstract class GUI
     protected Inventory inv;
     protected UUID uuid;
     protected JavaPlugin plugin;
-	protected RidingManager manager;
 	
     public GUI(String name,Player player,int size) {
         this.name = name;
         this.uuid = player.getUniqueId();
         this.inv = Bukkit.createInventory(null, size, name);
-        this.plugin = RidingCore.GetPlugin();
-        this.manager = RidingCore.GetManager();
+        this.plugin = FrameworkCore.plugin;
         this.init();
     }
     

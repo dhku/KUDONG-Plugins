@@ -9,20 +9,19 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import kr.kudong.common.basic.db.DBAccess;
 import kr.kudong.common.paper.config.ConfigLoader;
-import kr.kudong.framework.command.CommandManager;
+import kr.kudong.framework.command.FrameworkCommandManager;
 import kr.kudong.framework.listener.FrameworkListener;
 import kr.kudong.framework.reflection.ReflectionService;
 
 public class FrameworkCore extends JavaPlugin
 {
-	private static JavaPlugin plugin;
 	private static ReflectionService reflect;
 	
 	private Logger logger;
 	private ConfigLoader configLoader;
 	private FrameworkListener listener;
 	private PluginManager pluginManager;
-	private CommandManager commandManager;
+	private FrameworkCommandManager frameworkCommandManager;
 	private DBAccess dbAccess;
 	
 	@Override
@@ -36,7 +35,7 @@ public class FrameworkCore extends JavaPlugin
 		this.logger = this.getLogger();
 		this.configLoader = new ConfigLoader(this, this.logger);
 		this.dbAccess = new DBAccess(logger);
-		this.commandManager = new CommandManager(this.logger, this);
+		this.frameworkCommandManager = new FrameworkCommandManager(this.logger, this);
 		this.listener = new FrameworkListener(this.logger, this);
 		
 		this.registerConfig();
@@ -69,5 +68,7 @@ public class FrameworkCore extends JavaPlugin
 		this.configLoader.registerModule("database", this.dbAccess);
 		this.configLoader.loadConfig();
 	}
+	
+	public static JavaPlugin plugin;
 
 }

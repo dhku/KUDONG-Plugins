@@ -40,11 +40,12 @@ public class KeyInputListener extends PacketAdapter
 		UUID uuid = player.getUniqueId();
 		float sidewalks = container.getFloat().read(0);
 		float forward = container.getFloat().read(1); 
+		boolean jump = container.getBooleans().read(0);
 		boolean shift = container.getBooleans().read(1);
 		
 //		System.out.println("forward: "+ forward);
 //		System.out.println("sidewalks: "+ sidewalks);
-//		System.out.println("shift: "+ shift);
+//		System.out.println("jump: "+ jump);
 //		System.out.println("=======================");
 		
 		if(this.map.containsPlayerInput(uuid))
@@ -53,7 +54,7 @@ public class KeyInputListener extends PacketAdapter
 				event.setCancelled(true);
 			
 			KeyInputState state = this.map.getRidingPlayerInput(uuid);
-			state.setState(forward, sidewalks, shift);
+			state.setState(forward, sidewalks, shift, jump);
 		}
 	}
 }

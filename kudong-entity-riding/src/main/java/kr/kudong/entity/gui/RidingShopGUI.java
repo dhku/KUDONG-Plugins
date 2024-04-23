@@ -20,7 +20,7 @@ import kr.kudong.entity.data.SteerablePreset;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
-public class RidingShopGUI extends GUI
+public class RidingShopGUI extends RidingGUI
 {
 	private List<SteerablePreset> list;
 	

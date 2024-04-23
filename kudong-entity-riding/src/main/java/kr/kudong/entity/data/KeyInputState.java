@@ -5,12 +5,14 @@ public class KeyInputState
 	private float forward;
 	private float sidewalks;
 	private boolean shift;
+	private boolean spacebar;
 	
 	public KeyInputState()
 	{
 		this.forward = 0.0f;
 		this.sidewalks = 0.0f;
 		this.shift = false;
+		this.spacebar = false;
 	}
 	
 	public float getForward()
@@ -28,11 +30,12 @@ public class KeyInputState
 		return shift;
 	}
 
-	public void setState(float forward,float sidewalks,boolean shift)
+	public void setState(float forward,float sidewalks,boolean shift,boolean spacebar)
 	{
 		this.forward = forward;
 		this.sidewalks = sidewalks;
 		this.shift = shift;
+		this.spacebar = spacebar;
 	}
 	
 	public void setForward(float forward)
@@ -48,6 +51,16 @@ public class KeyInputState
 	public void setShift(boolean shift)
 	{
 		this.shift = shift;
+	}
+
+	public boolean isSpacebar()
+	{
+		return spacebar;
+	}
+
+	public void setSpacebar(boolean spacebar)
+	{
+		this.spacebar = spacebar;
 	}
 
 }

@@ -12,13 +12,13 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class CommandManager implements CommandExecutor
+public class FrameworkCommandManager implements CommandExecutor
 {
 	private final Logger logger;
 	private final JavaPlugin plugin;
 	private PluginCommand cmd;
 	
-	public CommandManager(Logger logger,
+	public FrameworkCommandManager(Logger logger,
 			JavaPlugin plugin)
 	{
 		this.logger = logger;

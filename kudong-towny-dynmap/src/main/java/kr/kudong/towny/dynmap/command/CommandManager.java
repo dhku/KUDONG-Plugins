@@ -31,7 +31,7 @@ public class CommandManager implements CommandExecutor
 		this.plugin = plugin;
 		this.manager = manager;
 		
-		this.cmd = this.plugin.getCommand("townydyn");
+		this.cmd = this.plugin.getCommand("towndyn");
 		this.cmd.setExecutor(this);
 	}
 
@@ -62,7 +62,7 @@ public class CommandManager implements CommandExecutor
 			return true;
 		}
 		
-		if(p.hasPermission("townydyn.admin"))
+		if(p.hasPermission("towndyn.admin"))
 		{
 			if(args[0].equalsIgnoreCase("리로드") || args[0].equalsIgnoreCase("reload"))
 			{
@@ -70,6 +70,14 @@ public class CommandManager implements CommandExecutor
 	            this.manager.reloadTownyChunks();
 				
 			}
+			
+//			if((args[0].equalsIgnoreCase("확인") || args[0].equalsIgnoreCase("check")) && args.length > 1)
+//			{
+//				
+//				
+//				List<TownyChunk> chunks = this.towny.getPlayerTownyChunks(player.getUuid());
+//				
+//			}
 			return true;
 		}
 	

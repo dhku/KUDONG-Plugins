@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 
-public class RidingMainGUI extends GUI
+public class RidingMainGUI extends RidingGUI
 {
 	
 	public RidingMainGUI(Player player)

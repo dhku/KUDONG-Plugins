@@ -6,5 +6,5 @@ api-version: ${bukkit-api.version}
 main: kr.kudong.towny.dynmap.TownyDynmapCore
 depend: [Kudong-framework,HQTowny,dynmap]
 commands:
-    townydyn:
-      aliases: [타우니맵]
+    towndyn:
+      aliases: [타우니맵,타맵]

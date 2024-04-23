@@ -17,7 +17,7 @@ import kr.kudong.entity.data.RidingPlayerSetting;
 import kr.kudong.entity.data.SteerableEntity;
 import kr.kudong.entity.data.SteerablePreset;
 
-public class RidingStorageGUI extends GUI
+public class RidingStorageGUI extends RidingGUI
 {
 	private RidingPlayerMap map;
 	private List<SteerablePreset> list;
