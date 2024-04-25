@@ -1,6 +1,4 @@
 
-set projectName=kudong-entity-riding
-
 cd ..
 
 echo Maven Build Start........
@@ -18,8 +16,11 @@ for /F "tokens=2 delims=, " %%G IN ('%searchCMD%') DO taskkill -pid %%G
 
 echo Auto Server Complete!
 
+
 set gitDIR=%cd%
 set serverDir=E:\SERVER 1.20.4
+
+set projectName=kudong-entity-riding
 
 echo Copy %projectName% Plugin.....
 copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
@@ -30,6 +31,11 @@ echo Copy %projectName% Plugin.....
 copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
 
 set projectName=kudong-towny-dynmap
+
+echo Copy %projectName% Plugin.....
+copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
+
+set projectName=kudong-book
 
 echo Copy %projectName% Plugin.....
 copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"

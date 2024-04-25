@@ -1,0 +1,13 @@
+name: ${artifactId}
+version: ${version}
+author: dhku10@gmail.com
+description: ${description}
+api-version: ${bukkit-api.version}
+main: kr.kudong.book.AldarBookCore
+commands:
+    aldarbooktest:
+        description: open
+        usage: /book
+    aldarbookupdate:
+        description: open
+        usage: /book

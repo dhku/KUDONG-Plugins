@@ -50,6 +50,7 @@
 		<module>kudong-framework</module>
 		<module>kudong-entity-riding</module>
 		<module>kudong-towny-dynmap</module>
+		<module>kudong-book</module>
 	</modules>
 	
 	<repositories>
