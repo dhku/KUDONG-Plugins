@@ -40,6 +40,11 @@ set projectName=kudong-book
 echo Copy %projectName% Plugin.....
 copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
 
+set projectName=kudong-nickname
+
+echo Copy %projectName% Plugin.....
+copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\plugins\"
+
 
 E:
 cd E:\SERVER 1.20.4
