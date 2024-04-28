@@ -51,6 +51,7 @@
 		<module>kudong-entity-riding</module>
 		<module>kudong-towny-dynmap</module>
 		<module>kudong-book</module>
+		<module>kudong-nickname</module>
 	</modules>
 	
 	<repositories>

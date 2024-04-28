@@ -54,7 +54,7 @@ public class ReflectionService
 		}
 	}
 
-	private static void setGameProfile(Player player, String changeName)
+	public static void setGameProfile(Player player, String changeName)
 	{
 		try
 		{

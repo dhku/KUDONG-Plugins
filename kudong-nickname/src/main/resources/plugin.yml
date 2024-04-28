@@ -1,0 +1,10 @@
+name: Kudong-nickname
+version: ${version}
+author: KUDONG
+description: ${description}
+api-version: ${bukkit-api.version}
+main: kr.kudong.nickname.NickNameCore
+depend: [Kudong-framework]
+commands:
+    nic:
+      aliases: [닉변,닉]
