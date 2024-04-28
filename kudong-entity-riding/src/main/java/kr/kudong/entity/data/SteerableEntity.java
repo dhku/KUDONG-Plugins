@@ -82,29 +82,33 @@ public class SteerableEntity
 	
 		if(forward > 0 && sidewalks == 0)
 		{
-			if(isShift)
+			if(isSpaceBar == false)
 			{
-				this.velocity += this.preset.ACCELERATION_RATE;
-				
-				if(this.velocity > this.preset.FORWARD_BOOST_MAXSPEED)
-					this.velocity = this.preset.FORWARD_BOOST_MAXSPEED;
-			}
-			else
-			{
-				if(this.velocity > this.preset.FORWARD_DEFAULT_MAXSPEED)
-				{
-					this.velocity += -this.preset.DECELERATION_RATE;
-					
-					if(this.velocity <= this.preset.FORWARD_DEFAULT_MAXSPEED)
-						this.velocity = this.preset.FORWARD_DEFAULT_MAXSPEED;
-				}
-				else
+
+				if(isShift)
 				{
 					this.velocity += this.preset.ACCELERATION_RATE;
 					
+					if(this.velocity > this.preset.FORWARD_BOOST_MAXSPEED)
+						this.velocity = this.preset.FORWARD_BOOST_MAXSPEED;
+				}
+				else
+				{
 					if(this.velocity > this.preset.FORWARD_DEFAULT_MAXSPEED)
-						this.velocity = this.preset.FORWARD_DEFAULT_MAXSPEED;
-				}	
+					{
+						this.velocity += -this.preset.DECELERATION_RATE;
+						
+						if(this.velocity <= this.preset.FORWARD_DEFAULT_MAXSPEED)
+							this.velocity = this.preset.FORWARD_DEFAULT_MAXSPEED;
+					}
+					else
+					{
+						this.velocity += this.preset.ACCELERATION_RATE;
+						
+						if(this.velocity > this.preset.FORWARD_DEFAULT_MAXSPEED)
+							this.velocity = this.preset.FORWARD_DEFAULT_MAXSPEED;
+					}	
+				}
 			}
 			
 			if(this.velocity < 0.0f)
