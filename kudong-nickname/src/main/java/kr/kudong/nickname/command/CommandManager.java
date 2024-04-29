@@ -15,6 +15,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -47,10 +48,22 @@ public class CommandManager implements CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
 	{
+		NickNameDBService db = this.manager.getService();
+		
+		if(sender instanceof ConsoleCommandSender)
+		{
+			return this.consoleCommand(sender,command,args);
+		}
+		
 		Player p = (Player)sender;
 		UUID uuid = p.getUniqueId();
-		NickNameDBService db = this.manager.getService();
 
+		if(!p.hasPermission("nickname.admin"))
+		{	
+			p.sendMessage("§c해당 명령어를 사용할 권한이 없습니다!");
+			return true;
+		}
+		
 		if(args.length == 0)
 		{
 			this.printHelpMessage(p);
@@ -65,7 +78,7 @@ public class CommandManager implements CommandExecutor
 
 			if(np == null)
 			{
-				p.sendMessage("§c해당 플레이어는 존재하지 않습니다.");
+				if(p != null)p.sendMessage("§c해당 플레이어는 존재하지 않습니다.");
 				return true;
 			}
 
@@ -158,12 +171,138 @@ public class CommandManager implements CommandExecutor
 		return true;
 	}
 	
+	private boolean consoleCommand(CommandSender sender, Command command, String[] args)
+	{
+		NickNameDBService db = this.manager.getService();
+		
+		if(args.length == 0)
+		{
+			this.printHelpMessage(null);
+			return true;
+		}
+		
+		if((args[0].equalsIgnoreCase("리셋") || args[0].equalsIgnoreCase("reset")) && args.length == 2)
+		{
+			String playerName = args[1];
+
+			NickNamePlayer np = this.findPlayer(playerName);
+
+			if(np == null)
+			{
+				this.logger.log(Level.WARNING, "플레이어 <"+playerName+">가 존재하지 않습니다.");
+				return true;
+			}
+			
+			Player p = np.getBukkitPlayer();
+
+			db.asyncUpdateNickName(np.getUniqueID(), null, (isSuccess) ->
+			{
+				if(isSuccess)
+				{
+					Bukkit.getScheduler().runTask(plugin, () ->
+					{
+						np.setNickName(null);
+						np.setHasNickname(false);
+						if(np.isOnline()) this.manager.applyNickName(np.getBukkitPlayer(), np.getOriginalName());
+						if(np.isOnline()) p.sendMessage("§a"+playerName+"님의 닉네임을 리셋하였습니다");
+					});
+				}
+				else
+				{
+					Bukkit.getScheduler().runTask(plugin, () ->
+					{
+						if(np.isOnline()) p.sendMessage("§c데이터베이스 오류로 닉네임을 변경하는데 실패하였습니다.");
+					});
+				}
+			});
+
+			return true;
+		}
+		
+		if(args.length == 2)
+		{
+			String playerName = args[0];
+			String nickname = args[1];
+
+			NickNamePlayer np = this.findPlayer(playerName);
+
+			if(np == null) 
+			{
+				this.logger.log(Level.WARNING, "플레이어 <"+playerName+">가 존재하지 않습니다.");
+				return true;
+			}
+			
+			Player p = np.getBukkitPlayer();
+			
+			if(this.findPlayer(nickname) != null)
+			{
+				if(np.isOnline()) p.sendMessage("§c해당 닉네임은 이미 존재합니다.");
+				return true;
+			}
+
+			// 닉네임 검증
+			if(!isValidNickName1(nickname))
+			{
+				if(np.isOnline()) p.sendMessage("§c닉네임을 입력할수 있는 범위를 벗어났습니다.");
+				return true;
+			}
+
+			if(!isValidNickName2(nickname))
+			{
+				if(np.isOnline()) p.sendMessage("§c닉네임에 들어갈수 없는 문자열이 존재합니다.");
+				return true;
+			}
+
+			if(np.hasNickname() && nickname.equals(np.getNickName()))
+			{
+				if(np.isOnline()) p.sendMessage("§c이미 동일한 닉네임을 사용하고 있습니다.");
+				return true;
+			}
+
+			db.asyncUpdateNickName(np.getUniqueID(), nickname, (isSuccess) ->
+			{
+				if(isSuccess)
+				{
+					Bukkit.getScheduler().runTask(plugin, () ->
+					{
+						np.setNickName(nickname);
+						np.setHasNickname(true);
+						if(np.isOnline()) 
+						{
+							this.manager.applyNickName(np);
+							p.sendMessage("§a"+playerName+"님의 닉네임을 "+nickname+"(으)로 설정하였습니다.");
+						}
+					});
+				}
+				else
+				{
+					Bukkit.getScheduler().runTask(plugin, () ->
+					{
+						if(np.isOnline()) p.sendMessage("§c데이터베이스 오류로 닉네임을 변경하는데 실패하였습니다.");
+					});
+				}
+			});
+			return true;
+		}
+		return true;
+	}
+
 	public void printHelpMessage(Player p)
 	{
-		p.sendMessage("§a닉네임 §f시스템 명령어 도움말");
-		p.sendMessage("========================================");
-		p.sendMessage("§e/닉변 <플레이어> <바꿀이름> §6: 플레이어의 닉네임을 변경합니다.");
-		p.sendMessage("§e/닉변 리셋 <플레이어> §6: 플레이어의 닉네임을 리셋 합니다.");
+		if(p != null)
+		{
+			p.sendMessage("§a닉네임 §f시스템 명령어 도움말");
+			p.sendMessage("========================================");
+			p.sendMessage("§e/닉변 <플레이어> <바꿀이름> §6: 플레이어의 닉네임을 변경합니다.");
+			p.sendMessage("§e/닉변 리셋 <플레이어> §6: 플레이어의 닉네임을 리셋 합니다.");
+		}
+		else
+		{
+			this.logger.log(Level.INFO, "§a닉네임 §f시스템 명령어 도움말");
+			this.logger.log(Level.INFO, "========================================");
+			this.logger.log(Level.INFO, "§e/닉변 <플레이어> <바꿀이름> §6: 플레이어의 닉네임을 변경합니다.");
+			this.logger.log(Level.INFO, "§e/닉변 리셋 <플레이어> §6: 플레이어의 닉네임을 리셋 합니다.");
+		}
 	}
 
 	public NickNamePlayer findPlayer(String name)

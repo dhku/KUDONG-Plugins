@@ -55,9 +55,9 @@ public class NickNameListener implements Listener
 		}
 		
 		if(np.hasNickname())
-			event.setJoinMessage("§a[+] §f"+np.getNickName());
+			event.setJoinMessage("[§2+§f] §b"+np.getNickName());
 		else
-			event.setJoinMessage("§a[+] §f"+np.getOriginalName());
+			event.setJoinMessage("[§2+§f] §b"+np.getOriginalName());
 	}
 	
 	@EventHandler
@@ -70,9 +70,9 @@ public class NickNameListener implements Listener
 			NickNamePlayer np = this.manager.getNickNamePlayer(uuid);
 			
 			if(np.hasNickname())
-				event.setQuitMessage("§c[-] §f"+np.getNickName());
+				event.setQuitMessage("[§4-§f]"+np.getNickName());
 			else
-				event.setQuitMessage("§c[-] §f"+np.getOriginalName());
+				event.setQuitMessage("[§4-§f]"+np.getOriginalName());
 			
 			np.setBukkitPlayer(null);
 		}
@@ -101,6 +101,24 @@ public class NickNameListener implements Listener
 			{
 				String a = findPlayerOriginalName(args[1]);
 				event.setMessage("/tp "+a);
+			}
+		}
+		else if(cmd.matches("/tphere(.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 2)
+			{
+				String a = findPlayerOriginalName(args[1]);
+				event.setMessage("/tphere "+a);
+			}
+		}
+		else if(cmd.matches("/tpa(.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 2)
+			{
+				String a = findPlayerOriginalName(args[1]);
+				event.setMessage("/tpa "+a);
 			}
 		}
 	}
