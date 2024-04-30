@@ -4,5 +4,7 @@ author: KUDONG
 description: ${description}
 api-version: ${bukkit-api.version}
 main: kr.kudong.framework.FrameworkCore
+depend: [PlaceholderAPI]
 commands:
-    kudong:
+    scb:
+      aliases: [스코보드]    

@@ -1,5 +1,8 @@
 package kr.kudong.framework.listener;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,12 +12,16 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import kr.kudong.framework.scoreboard.TownyScoreboard;
 
 public class FrameworkListener implements Listener
 {
 	private final Logger logger;
 	private final JavaPlugin plugin;
+	private Map<UUID,Boolean> map = TownyScoreboard.map;
 	
 	public FrameworkListener(Logger logger, JavaPlugin plugin)
 	{
@@ -26,14 +33,32 @@ public class FrameworkListener implements Listener
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
 		Player player = e.getPlayer();
+		UUID uuid = player.getUniqueId();
+		Bukkit.getScheduler().runTaskLater(plugin, ()->{
+			
+			if(!map.containsKey(uuid))
+			{
+				map.put(uuid, true);
+				TownyScoreboard.create(player);
+			}
+			else
+			{
+				boolean isActivate = map.get(uuid);
+				
+				if(isActivate)
+					TownyScoreboard.create(player);
+				else
+					TownyScoreboard.Close(player);
+			}
+		},10L);
+	}
+	
+	@EventHandler
+	public void onPlayerQuit(PlayerQuitEvent e)
+	{
+		Player player = e.getPlayer();
 		
-//		Bukkit.getScheduler().runTaskLater(plugin, ()->{
-//			String changedName = player.getDisplayName();
-//			
-//			char COLOR_CHAR = '\u00A7';
-//			changedName = changedName.replaceAll("&", String.valueOf(COLOR_CHAR));
-//			changedName = ChatColor.stripColor(changedName);
-//		}, 3L);
+
 	}
 
 }
