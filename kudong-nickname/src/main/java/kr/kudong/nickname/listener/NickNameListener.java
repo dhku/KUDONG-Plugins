@@ -82,13 +82,13 @@ public class NickNameListener implements Listener
 	public void preCommand(PlayerCommandPreprocessEvent event)
 	{
 		String cmd = event.getMessage();
-		if(cmd.matches("/땅관리 목록(.*)"))
+		if(cmd.matches("/땅관리 목록 (.*)"))
 		{
 			String[] args = cmd.split(" ");
 			String a = findPlayerOriginalName(args[2]);
 			event.setMessage("/땅관리 목록 "+a);
 		}
-		else if(cmd.matches("/tp(.*)"))
+		else if(cmd.matches("/tp (.*)"))
 		{
 			String[] args = cmd.split(" ");
 			if(args.length == 3)
@@ -103,7 +103,7 @@ public class NickNameListener implements Listener
 				event.setMessage("/tp "+a);
 			}
 		}
-		else if(cmd.matches("/tphere(.*)"))
+		else if(cmd.matches("/tphere (.*)"))
 		{
 			String[] args = cmd.split(" ");
 			if(args.length == 2)
@@ -112,13 +112,35 @@ public class NickNameListener implements Listener
 				event.setMessage("/tphere "+a);
 			}
 		}
-		else if(cmd.matches("/tpa(.*)"))
+		else if(cmd.matches("/tpa (.*)"))
 		{
 			String[] args = cmd.split(" ");
 			if(args.length == 2)
 			{
 				String a = findPlayerOriginalName(args[1]);
 				event.setMessage("/tpa "+a);
+			}
+		}
+		else if(cmd.matches("/거래 신청 (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 3)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				event.setMessage("/거래 신청 "+a);
+			}
+		}
+		else if(cmd.matches("/kill (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 2)
+			{
+				NickNamePlayer n = findPlayer(args[1]);
+				
+				if(n.hasNickname())
+					event.setMessage("/kill "+n.getNickName());
+				else
+					event.setMessage("/kill "+n.getOriginalName());
 			}
 		}
 	}
@@ -146,18 +168,17 @@ public class NickNameListener implements Listener
 		return null;
 	}
 	
-//	public static void main(String[] args)
-//	{
-//		String cmd = "/땅관리 목록 동혁";
-//		String cmd2 = "/tp dhku 동혁";
-//		if(cmd.matches("/땅관리 목록(.*)"))
-//		{
-//			String[] args2 = cmd.split(" ");
-//			System.out.println(args2[0]);
-//			System.out.println(args2[1]);
+	public static void main(String[] args)
+	{
+		String cmd = "/kill 동혁";
+		if(cmd.matches("/kill (.*)"))
+		{
+			String[] args2 = cmd.split(" ");
+			System.out.println(args2[0]);
+			System.out.println(args2[1]);
 //			System.out.println(args2[2]);
-//			
-//		}
-//	}
+			
+		}
+	}
 
 }
