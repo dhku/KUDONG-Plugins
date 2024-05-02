@@ -9,4 +9,6 @@ commands:
     scb:
       aliases: [스코어보드,스보] 
     kudong:
-      aliases: [쿠동]  
+      aliases: [쿠동]
+    bc:
+      aliases: [방송]  

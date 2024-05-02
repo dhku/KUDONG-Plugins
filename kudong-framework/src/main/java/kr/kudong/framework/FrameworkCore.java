@@ -21,6 +21,7 @@ import kr.kudong.framework.chat.ChatConfig;
 import kr.kudong.framework.chat.ChatListener;
 import kr.kudong.framework.chat.ChatManager;
 import kr.kudong.framework.comm.FrameworkMessageReceiver;
+import kr.kudong.framework.command.BroadcastCommandManager;
 import kr.kudong.framework.command.FrameworkCommandManager;
 import kr.kudong.framework.command.ScoreboardCommandManager;
 import kr.kudong.framework.controller.FrameworkManager;
@@ -41,6 +42,7 @@ public class FrameworkCore extends JavaPlugin
 	private PluginManager pluginManager;
 	private ScoreboardCommandManager scoreboardCommandManager;
 	private FrameworkCommandManager frameworkCommandManager;
+	private BroadcastCommandManager broadcastCommandManager;
 	private FrameworkMessageReceiver comm;
 	private DBAccess dbAccess;
 	private ChatManager chatManager;
@@ -66,6 +68,7 @@ public class FrameworkCore extends JavaPlugin
 		
 		this.scoreboardCommandManager = new ScoreboardCommandManager(this.logger, this);
 		this.frameworkCommandManager = new FrameworkCommandManager(this.logger, this , this.manager);
+		this.broadcastCommandManager = new BroadcastCommandManager(this.logger, this , this.manager);
 		
 		this.scoreboardListener = new ScoreboardListener(this.logger, this);
 		this.chatManager = new ChatManager(this.logger, this);

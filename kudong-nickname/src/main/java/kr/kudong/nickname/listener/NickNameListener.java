@@ -202,6 +202,38 @@ public class NickNameListener implements Listener
 				event.setMessage("/op "+a);
 			}
 		}
+		else if(cmd.matches("/kudong move (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length >= 3)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				
+				StringBuilder s = new StringBuilder();
+				for(int i=3; i < args.length; i++)
+				{
+					s.append(args[i]);
+					s.append(" ");
+				}
+				String format = s.toString();
+				event.setMessage("/kudong move "+a+" "+format);
+			}
+		}
+		else if(cmd.matches("/kudong tp (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 3)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				event.setMessage("/kudong tp "+a);
+			}
+			if(args.length == 4)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				String b = findPlayerOriginalName(args[3]);
+				event.setMessage("/kudong tp "+a+" "+b);
+			}
+		}
 	}
 	
 	/**

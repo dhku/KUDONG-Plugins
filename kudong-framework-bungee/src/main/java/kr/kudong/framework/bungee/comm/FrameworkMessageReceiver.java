@@ -20,6 +20,8 @@ import kr.kudong.common.basic.util.AldarLocation;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -29,15 +31,16 @@ import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
 public class FrameworkMessageReceiver implements Listener
-{
-	
+{	
 	private Logger logger;
-	private Map<UUID,String> map;
+	private Map<UUID,String> map; //teleport coord
+	private Map<UUID,String> map2; //teleport player
 	
 	public FrameworkMessageReceiver(Logger logger)
 	{
 		this.logger = logger;
 		this.map = new HashMap<>();
+		this.map2 = new HashMap<>();
 	}
 
 	/**
@@ -51,26 +54,98 @@ public class FrameworkMessageReceiver implements Listener
         	case ProtocolKey.TELEPORT_COORD:
         		this.handleTeleportCoordMessage(msg);
                 break;
+			case ProtocolKey.TELEPORT_PLAYER:
+				this.handleTeleportPlayer(msg);
+				break;
 			case ProtocolKey.CHAT_MESSAGE:
 				//다른 서버로 브로드캐스팅
 				this.handleChatMessage(msg);
-				break;    
+				break;  
+			case ProtocolKey.BROADCAST_PLAYER:
+				this.handleBroadcastMessage(msg);
+				break;  
         }
 
 	}
 	
+	private void handleBroadcastMessage(Message msg)
+	{
+		String type = msg.data.readUTF();
+		String format = msg.data.readUTF();
+		
+		if(type.equals("chat1"))
+		{
+			BaseComponent r1 = new TextComponent("§f§l---------------------------");
+			BaseComponent r2 = new TextComponent(" §6공지사항 §f: "+format);
+			BaseComponent r3 = new TextComponent(" ");
+
+			for(ProxiedPlayer p :ProxyServer.getInstance().getPlayers())
+			{
+				p.sendMessage(r1);
+				p.sendMessage(r3);
+				p.sendMessage(r2);
+				p.sendMessage(r3);
+				p.sendMessage(r1);
+			}
+
+		}
+
+	}
+
 	/**
-	 * ServerSwitchEvnt가 불리기전에 HashMap 값을 저장합니다.
+	 * ServerSwitchEvent가 불리기전에 HashMap 값을 저장합니다.
+	 * @param msg
+	 */
+	private void handleTeleportPlayer(Message msg)
+	{
+		UUID player = UUID.fromString(msg.data.readUTF()); //uuid
+		UUID targetplayer = UUID.fromString(msg.data.readUTF()); //uuid
+		
+		ProxiedPlayer p1 = ProxyServer.getInstance().getPlayer(player);
+		ProxiedPlayer p2 = ProxyServer.getInstance().getPlayer(targetplayer);
+		
+		if(p1 == null || p2 == null)
+		{
+			BaseComponent ret = new TextComponent("§c해당 플레이어는 존재하지 않습니다. :-(");
+			p1.sendMessage(ret);
+			return;
+		}
+			
+
+		ServerInfo base = p1.getServer().getInfo();
+		ServerInfo target = p2.getServer().getInfo();
+		
+		if(base.getName().equals(target.getName()))
+			return;
+
+		if(isAlive(target))
+			map2.put(player, targetplayer.toString());
+		else
+			return;
+		
+		p1.connect(target);
+	}
+
+	/**
+	 * ServerSwitchEvent가 불리기전에 HashMap 값을 저장합니다.
 	 * @param msg
 	 */
     private void handleTeleportCoordMessage(Message msg)
 	{
-    	ProxiedPlayer p = msg.player;
+//    	ProxiedPlayer p = msg.player;
     	String loc = msg.data.readUTF();
+    	UUID uuid = UUID.fromString(msg.data.readUTF());
+    	
     	AldarLocation l = AldarLocation.deserialize(loc);
     	
     	ServerInfo info = ProxyServer.getInstance().getServerInfo(l.server);
     	
+    	if(isAlive(info))
+    		map.put(uuid, loc);
+	}
+    
+    public boolean isAlive(ServerInfo info)
+    {
     	if(info != null)
     	{
     		InetSocketAddress addr = info.getAddress();
@@ -83,12 +158,19 @@ public class FrameworkMessageReceiver implements Listener
 			}
 			catch(Exception e)
 			{
-				this.logger.log(Level.INFO,"서버 <"+l.server+">가 존재하지 않거나 오프라인으로 텔레포트 요청이 거부되었습니다.");
-				return;
+				this.logger.log(Level.INFO,"서버 <"+info.getName()+">가 오프라인으로 텔레포트 요청이 거부되었습니다.");
+				return false;
 			}
-    		map.put(p.getUniqueId(), loc);
+    		return true;
     	}
-	}
+    	else
+    	{
+    		this.logger.log(Level.INFO,"서버 <"+info.getName()+">가 존재하지않아 텔레포트 요청이 거부되었습니다.");
+    		return false;
+    	}
+    		
+    }
+    
     
 	/**
 	 * ServerSwitchEvnt : 플레이어가 마인크래프트 서버에 접속한후에 불립니다.
@@ -113,6 +195,16 @@ public class FrameworkMessageReceiver implements Listener
             p.getServer().getInfo().sendData(ProtocolKey.MAIN_CHANNEL,out.toByteArray());
             map.remove(uuid);
     	}
+    	
+    	if(map2.containsKey(p.getUniqueId()))
+    	{
+    		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+    		out.writeUTF(ProtocolKey.TELEPORT_PLAYER);
+    		out.writeUTF(uuid.toString()); //base
+    		out.writeUTF(map2.get(uuid)); //target
+            p.getServer().getInfo().sendData(ProtocolKey.MAIN_CHANNEL,out.toByteArray());
+            map2.remove(uuid);
+    	}
     }
  
     /**
@@ -122,12 +214,12 @@ public class FrameworkMessageReceiver implements Listener
      */
 	private void handleChatMessage(Message msg)
 	{
-    	ProxiedPlayer player = msg.player;
-    	String senderServer = player.getServer().getInfo().getName();
-    	
     	String id = msg.data.readUTF();
     	String name = msg.data.readUTF();
     	String chatMsg = msg.data.readUTF();
+    	
+    	ProxiedPlayer player = ProxyServer.getInstance().getPlayer(UUID.fromString(id));
+    	String senderServer = player.getServer().getInfo().getName();
     	
     	this.logger.log(Level.INFO, "chatMsg relay>"+chatMsg);
     	
@@ -176,25 +268,21 @@ public class FrameworkMessageReceiver implements Listener
 	    this.logger.log(Level.INFO,"KEY => "+key);
 	    this.logger.log(Level.INFO,"=====================");
         
-        if ( event.getReceiver() instanceof ProxiedPlayer )
-        {
-            ProxiedPlayer player = (ProxiedPlayer) event.getReceiver();
-            Message msg = new Message(key,player,in);
-            this.receiveData(msg);
-        }
-        else if(event.getReceiver() instanceof Server )
-        {
-          Server receiver = (Server) event.getReceiver();
-          this.logger.log(Level.INFO,"서버 리시버 호출");
-        }	
+        Message msg = new Message(key,event.getReceiver(),in);
+        this.receiveData(msg);
 
     }
     
-//    // the receiver is a server when the proxy talks to a server
-//    if ( event.getReceiver() instanceof Server )
+//    if ( event.getReceiver() instanceof ProxiedPlayer )
 //    {
-//        Server receiver = (Server) event.getReceiver();
-//        this.logger.log(Level.INFO,"2222222 => " + receiver.getInfo().getName());
+//        ProxiedPlayer player = (ProxiedPlayer) event.getReceiver();
+//        Message msg = new Message(key,player,in);
+//        this.receiveData(msg);
 //    }
+//    else if(event.getReceiver() instanceof Server )
+//    {
+//      Server receiver = (Server) event.getReceiver();
+//      this.logger.log(Level.INFO,"서버 리시버 호출");
+//    }	
 
 }

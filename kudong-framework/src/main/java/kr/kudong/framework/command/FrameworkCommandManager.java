@@ -54,8 +54,6 @@ public class FrameworkCommandManager implements CommandExecutor
 			player = (Player)sender;
 		}
 
-		UUID uuid = player.getUniqueId();
-
 		if(args.length == 0)
 		{
 
@@ -74,7 +72,7 @@ public class FrameworkCommandManager implements CommandExecutor
 					
 					if(playeruuid == null)
 					{
-						if(!isConsoleSender) player.sendMessage("플레이어<"+username+">는 존재하지 않습니다!");
+						if(!isConsoleSender) player.sendMessage("§c플레이어<§e"+username+"§c>는 존재하지 않습니다!");
 						else this.logger.log(Level.INFO, "플레이어<"+username+">는 존재하지 않습니다!");
 						return true;
 					}
@@ -104,7 +102,8 @@ public class FrameworkCommandManager implements CommandExecutor
 					}
 					catch(NumberFormatException e)
 					{
-						if(!isConsoleSender) player.sendMessage("숫자 입력이 잘못되었습니다 :-(");
+						if(!isConsoleSender) player.sendMessage("§c숫자 입력이 잘못되었습니다 :-(");
+						else this.logger.log(Level.INFO, "숫자 입력이 잘못되었습니다 :-(");
 						return true;
 					}
 
@@ -125,19 +124,36 @@ public class FrameworkCommandManager implements CommandExecutor
 				{
 					if(isConsoleSender) 
 					{
-						player.sendMessage("해당 명령어는 콘솔에서 수행할수 없습니다.");
+						this.logger.log(Level.INFO, "해당 명령어는 콘솔에서 수행할수 없습니다.");
 						return true;
 					}
 
 					String targetUsername = args[1];
 					playerUUID = player.getUniqueId();
 					targetPlayerUUID = this.manager.findPlayer(targetUsername);
-					
+
 					if(targetPlayerUUID == null)
 					{
-						//실패
+						player.sendMessage("§c해당 플레이어를 찾을수 없습니다.");
 						return true;
 					}
+					
+					Player pp = Bukkit.getPlayer(targetPlayerUUID);
+					
+					if(pp != null)
+					{
+						player.sendMessage("§a["+pp.getDisplayName()+"]님에게 텔레포트 되었습니다.");
+						player.teleport(pp.getLocation());
+						return true;
+					}
+					
+					
+					if(targetPlayerUUID.equals(playerUUID))
+					{
+						player.sendMessage("§c자기 자신은 텔레포트할수 없습니다!");
+						return true;
+					}
+					
 				}
 				// /kudong tp <player> <target_player>
 				else if(args.length == 3)
@@ -150,25 +166,43 @@ public class FrameworkCommandManager implements CommandExecutor
 					
 					if(targetPlayerUUID == null || playerUUID == null)
 					{
-						//실패
+						if(!isConsoleSender) player.sendMessage("§c해당 플레이어를 찾을수 없습니다.");
+						else this.logger.log(Level.INFO, "해당 플레이어를 찾을수 없습니다.");
 						return true;
 					}
 				}
-
+				
+				this.sendTeleportPlayer(playerUUID, targetPlayerUUID);
+				
 				return true;
 			}
 
 		}
 		else
 		{
-			if(!isConsoleSender) player.sendMessage("KUDONG-FRAMEWORK chat.yml에서 isBungeecord=true를 확인하세요");
+			if(!isConsoleSender) player.sendMessage("§cKUDONG-FRAMEWORK chat.yml에서 isBungeecord=true를 확인하세요");
 			else this.logger.log(Level.INFO,"KUDONG-FRAMEWORK chat.yml에서 isBungeecord=true를 확인하세요");
 		}
-		
-
-
 
 		return true;
+	}
+	
+	public void sendTeleportPlayer(UUID uuid, UUID target)
+	{
+		Player dummyPlayer = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+
+		if(dummyPlayer == null)
+		{
+			this.logger.log(Level.INFO,"최소 1명의 플레이어가 서버에 접속해있어야 패킷 전달이 가능합니다.");
+			return;
+		}
+		
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF(ProtocolKey.TELEPORT_PLAYER);
+		out.writeUTF(uuid.toString());
+		out.writeUTF(target.toString());
+		
+		dummyPlayer.sendPluginMessage(this.plugin, ProtocolKey.MAIN_CHANNEL, out.toByteArray());
 	}
 	
 	public void sendTeleportCoordMessge(UUID uuid, String username, AldarLocation loc)

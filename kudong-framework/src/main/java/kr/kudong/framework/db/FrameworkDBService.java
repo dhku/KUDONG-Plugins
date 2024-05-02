@@ -95,5 +95,33 @@ public class FrameworkDBService
 		}		
 		return username;
 	}
+	
+	public UUID getUsernameInPlayerData(String username)
+	{
+		UUID uuid = null;
+		
+		try 
+		{
+			PreparedStatement ps = dbAccess.query(SQLSchema.FrameworkPlayerTable_Select_Player_UUID);
+			ps.setString(1, username);
+			ps.execute();
+			
+			ResultSet rs = ps.getResultSet();
+			while (rs.next())
+			{
+				String raw = rs.getString(1);
+				
+				if(raw != null)
+					uuid = UUID.fromString(raw);
+
+			}
+			rs.close();
+		} 
+		catch (SQLException e1)
+		{
+			logger.log(Level.SEVERE, "SQLException 에러", e1);
+		}		
+		return uuid;
+	}
 
 }

@@ -36,7 +36,10 @@ public class FrameworkManager
 		{
 			if(np.getUsername().equals(name)) return np.getUuid();
 		}
-		return null;
+		UUID uuid = this.service.getUsernameInPlayerData(name);
+		if(uuid != null)
+			this.map.put(uuid, new FrameworkPlayer(uuid,name));
+		return uuid;
 	}
 
 	public FrameworkDBService getService()

@@ -14,6 +14,7 @@ public class SQLSchema
 	
 	public static final String FrameworkPlayerTable_Select = "SELECT * FROM framework_player_data;";
 	public static final String FrameworkPlayerTable_Select_Player = "SELECT username FROM framework_player_data where playeruuid = ?;";
+	public static final String FrameworkPlayerTable_Select_Player_UUID = "SELECT playeruuid FROM framework_player_data where username = ?;";
 	public static final String FrameworkPlayerTable_Insert ="INSERT INTO framework_player_data VALUES(?,?);";
 	public static final String FrameworkPlayerTable_Delete ="DELETE FROM framework_player_data WHERE playeruuid=?";
 	public static final String FrameworkPlayerTable_Update ="UPDATE framework_player_data SET username = ? WHERE playeruuid=?;";

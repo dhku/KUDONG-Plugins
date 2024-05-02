@@ -38,23 +38,39 @@ public class FrameworkMessageReceiver implements PluginMessageListener
 			case ProtocolKey.TELEPORT_COORD:
 				this.handleTeleportCoord(msg);
 				break;
+			case ProtocolKey.TELEPORT_PLAYER:
+				this.handleTeleportPlayer(msg);
+				break;
 		}
 	}
 	
+	private void handleTeleportPlayer(Message msg)
+	{
+		UUID base = UUID.fromString(msg.data.readUTF());
+		UUID target = UUID.fromString(msg.data.readUTF());
+		
+		Bukkit.getScheduler().runTaskLater(plugin, ()->{
+
+			Player player = Bukkit.getServer().getPlayer(base);
+			Player playerTarget = Bukkit.getServer().getPlayer(target);
+			
+			if(player != null && playerTarget != null)
+			{
+				player.teleport(playerTarget.getLocation());
+			}
+			else
+				this.logger.log(Level.INFO,"텔레포트 실패 :-(");
+
+		}, 5L);
+		
+	}
+
 	private void handleChatMessage(Message msg)
 	{
     	String id = msg.data.readUTF();
     	String name = msg.data.readUTF();
     	String chatMsg = msg.data.readUTF();
-    	
-    	
-//    	String format = "[§a글로벌§f] %arcprefix_prefix%§f{name} §8» §f{message}";
-//    	
-//    	format = format.replace("{name}", name);
-//    	format = format.replace("{message}", chatMsg);
-//    	format = PlaceholderAPI.setPlaceholders(Bukkit.getOfflinePlayer(UUID.fromString(id)), format);
-//    	format = format.replaceAll("&", "§");
-    	
+
     	this.logger.log(Level.INFO, "출력>"+chatMsg);
     	
     	for(Player p : Bukkit.getServer().getOnlinePlayers())
