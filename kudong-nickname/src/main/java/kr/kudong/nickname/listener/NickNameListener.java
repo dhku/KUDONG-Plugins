@@ -143,6 +143,65 @@ public class NickNameListener implements Listener
 					event.setMessage("/kill "+n.getOriginalName());
 			}
 		}
+		else if(cmd.matches("/lp user (.*) parent set (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 6)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				String b = args[5];
+				event.setMessage("/lp user "+a+" parent set "+b);
+			}
+		}
+		else if(cmd.matches("/eco give (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 4)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				String b = args[3];
+				event.setMessage("/eco give "+a+" "+b);
+			}
+		}
+		else if(cmd.matches("/eco take (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 4)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				String b = args[3];
+				event.setMessage("/eco take "+a+" "+b);
+			}
+		}
+		else if(cmd.matches("/eco reset (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 4)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				String b = args[3];
+				event.setMessage("/eco reset "+a+" "+b);
+			}
+		}
+		else if(cmd.matches("/eco set (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 4)
+			{
+				String a = findPlayerOriginalName(args[2]);
+				String b = args[3];
+				event.setMessage("/eco set "+a+" "+b);
+			}
+		}
+		else if(cmd.matches("/op (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length == 2)
+			{
+				String a = findPlayerOriginalName(args[1]);
+				event.setMessage("/op "+a);
+			}
+		}
 	}
 	
 	/**
@@ -170,15 +229,24 @@ public class NickNameListener implements Listener
 	
 	public static void main(String[] args)
 	{
-		String cmd = "/kill 동혁";
-		if(cmd.matches("/kill (.*)"))
-		{
-			String[] args2 = cmd.split(" ");
-			System.out.println(args2[0]);
-			System.out.println(args2[1]);
+//		String cmd = "/lp user2 dhku parent set 개발자";
+//		if(cmd.matches("/lp user (.*) parent set (.*)"))
+//		{
+//			String[] args2 = cmd.split(" ");
 //			System.out.println(args2[2]);
-			
-		}
+//			System.out.println(args2[5]);
+////			System.out.println(args2[2]);
+//			
+//		}
+//		String cmd = "/땅관리 목록 (.*)";
+//		if(cmd.matches("/땅관리 멤버관리 (.*)"))
+//		{
+//			String[] args2 = cmd.split(" ");
+//			System.out.println(args2[2]);
+//			System.out.println(args2[5]);
+////			System.out.println(args2[2]);
+//			
+//		}
 	}
 
 }

@@ -7,4 +7,6 @@ main: kr.kudong.framework.FrameworkCore
 depend: [PlaceholderAPI]
 commands:
     scb:
-      aliases: [스코보드]    
+      aliases: [스코어보드,스보] 
+    kudong:
+      aliases: [쿠동]  

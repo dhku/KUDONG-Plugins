@@ -1,0 +1,10 @@
+name: ${artifactId}
+version: ${version}
+author: KUDONG
+description: ${description}
+main: kr.kudong.framework.bungee.FrameworkCore
+api-version: ${bukkit-api.version}
+commands:
+    aldarcommsend:
+        description: communication test
+        usage: /aldarcommsend <target> [data]
