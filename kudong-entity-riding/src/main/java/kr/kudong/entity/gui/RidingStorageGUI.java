@@ -12,6 +12,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import kr.kudong.entity.RidingCore;
 import kr.kudong.entity.data.RidingPlayerMap;
 import kr.kudong.entity.data.RidingPlayerSetting;
 import kr.kudong.entity.data.SteerableEntity;
@@ -61,7 +62,7 @@ public class RidingStorageGUI extends RidingGUI
 			l.add("§7-최고 스피드: §b"+FORWARD_DEFAULT_MAXSPEED*100+"km/h §7부스트 적용시(§b"+FORWARD_BOOST_MAXSPEED*100+"km/h§7)");
 			l.add("§7-민감도: §b"+sensitive+"");
 			l.add("§7-접지력: §b"+TRACTION+"");
-			l.add("§7-가격: §e"+price+"$");
+			l.add("§7-구매한 가격: §e"+RidingCore.formatter.format(price)+"원");
 			
 			setItem("§6§l"+displayName+"§6",l, item,(short)0,1, count++);
 		}

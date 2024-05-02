@@ -1,5 +1,6 @@
 package kr.kudong.entity;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -157,6 +158,8 @@ public class RidingCore extends JavaPlugin
         return true;
     }
     
+    
+    public static DecimalFormat formatter = new DecimalFormat("###,###.##"); 
 	private static RidingManager ridingManager;
 	private static RidingService dbService;
 	private static JavaPlugin plugin;

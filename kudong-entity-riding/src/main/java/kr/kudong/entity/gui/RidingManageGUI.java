@@ -1,5 +1,6 @@
 package kr.kudong.entity.gui;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -58,8 +59,7 @@ public class RidingManageGUI extends RidingGUI
 			
 			l.add("");
 			l.add("§7-좌클릭시 해당 물건을 판매합니다.");
-			l.add("§7-클릭시 반환되는 가격: §e"+price+"$");
-			
+			l.add("§7-클릭시 반환되는 가격: §e"+RidingCore.formatter.format(price*0.8)+"원");
 			setItem("§6§l"+displayName+"§6",l, item,(short)0,1, count++);
 		}
 		
@@ -91,7 +91,7 @@ public class RidingManageGUI extends RidingGUI
         if(map.isExistPreset(uuid, preset))
         {
         	
-        	EconomyResponse r = econ.depositPlayer(player, preset.getPRICE());
+        	EconomyResponse r = econ.depositPlayer(player, preset.getPRICE() * 0.8);
         	
             if(r.transactionSuccess()) 
             {
@@ -101,7 +101,7 @@ public class RidingManageGUI extends RidingGUI
             		{
             			Bukkit.getScheduler().runTask(plugin, ()->{
             				map.removePresetInPurchasedData(uuid, preset);
-            				player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7판매에 §e%s§7가 §a입금§7되었고 잔고 §e%s§7가 되었습니다.", econ.format(r.amount), econ.format(r.balance)));
+            				player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7판매에 §e%s원§7이 §a입금§7되었고 잔고 §e%s원§7이 되었습니다.", RidingCore.formatter.format(r.amount), RidingCore.formatter.format(r.balance)));
             				this.refresh();
             				
             			});
@@ -112,7 +112,7 @@ public class RidingManageGUI extends RidingGUI
             			Bukkit.getScheduler().runTask(plugin, ()->{
             				
             				player.sendMessage("§7거래 오류가 발생하였습니다.");
-            				econ.withdrawPlayer(player, preset.getPRICE());
+            				econ.withdrawPlayer(player, preset.getPRICE() * 0.8);
             				
             			});
             			

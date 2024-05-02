@@ -3,6 +3,7 @@ package kr.kudong.entity.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -68,6 +69,9 @@ public class SteerableEntity
 	
 	public void updatePhysics(Player player ,KeyInputState state)
 	{
+		double tps = (Bukkit.getServer().getTPS())[0];
+		double correction = (20.0 / tps);
+		
 		double height = this.checkGravity(state);
 		Entity e = entity;
 		float forward = state.getForward();
@@ -171,7 +175,7 @@ public class SteerableEntity
 		
 		this.updateGUI(player);
 		
-		this.currentVelocity = this.currentDirection.clone().multiply(this.velocity);
+		this.currentVelocity = this.currentDirection.clone().multiply(correction * this.velocity);
 		this.currentVelocity.setY(height);
 		
 		this.entity.setVelocity(this.currentVelocity);

@@ -57,7 +57,7 @@ public class RidingShopGUI extends RidingGUI
 			
 			l.add("");
 			l.add("§7-해당 상품을 좌클릭시 구매가 가능합니다.");
-			l.add("§7└가격: §e"+price+"$");
+			l.add("§7└가격: §e"+RidingCore.formatter.format(price)+"원");
 			l.add("§7└최고 스피드: §b"+FORWARD_DEFAULT_MAXSPEED*100+"km/h §7부스트 적용시(§b"+FORWARD_BOOST_MAXSPEED*100+"km/h§7)");
 			l.add("§7└민감도: §b"+sensitive+"");
 			l.add("§7└접지력: §b"+TRACTION+"");
@@ -101,7 +101,7 @@ public class RidingShopGUI extends RidingGUI
         }
         else if(money < preset.getPRICE())
         {
-        	player.sendMessage("§7돈이 부족 합니다. <잔고: §e"+money+"$"+"§7>");
+        	player.sendMessage("§7돈이 부족 합니다. <잔고: §e"+RidingCore.formatter.format(money)+"원"+"§7>");
         }
         else
         {
@@ -116,7 +116,7 @@ public class RidingShopGUI extends RidingGUI
             		{
             			Bukkit.getScheduler().runTask(plugin, ()->{
             				map.AddPreset(uuid, preset);
-            				player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7구매에 §e%s§7가 §c출금§7되었고 잔고 §e%s§7가 남았습니다.", econ.format(r.amount), econ.format(r.balance)));
+            				player.sendMessage(String.format("§7탈것 §e"+preset.getDISPLAY_NAME()+" §7구매에 §e%s원§7이 §c출금§7되었고 잔고 §e%s원§7이 남았습니다.", RidingCore.formatter.format(r.amount), RidingCore.formatter.format(r.balance)));
                         	player.sendMessage("§7구매하신 상품은 §b탈것 메인 - 운전§7에서 이용 가능합니다.");
             				
             			});
