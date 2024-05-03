@@ -22,7 +22,7 @@ set serverDir=E:\SERVER 1.20.4\TestServer
 set projectName=kudong-framework-bungee
 
 echo Copy %projectName% Plugin.....
-copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\proxy_bungee\plugins\"
+copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\proxy\plugins\"
 
 set projectName=kudong-framework
 
@@ -34,7 +34,7 @@ copy "%gitDIR%\target\%projectName%.jar" "%serverDir%\server1\plugins\"
 
 
 E:
-cd %serverDir%\proxy_bungee
+cd %serverDir%\proxy
 
 echo START SERVER....
 
@@ -52,8 +52,5 @@ echo START SERVER....
 
 start cmd /c start.bat
 
-
-
-pause
 
 
