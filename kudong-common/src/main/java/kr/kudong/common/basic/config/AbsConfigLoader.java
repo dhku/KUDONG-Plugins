@@ -1,4 +1,4 @@
-package kr.kudong.common.paper.config;
+package kr.kudong.common.basic.config;
 
 import java.io.File;
 import java.io.FileInputStream;

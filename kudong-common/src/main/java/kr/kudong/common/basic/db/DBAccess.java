@@ -2,7 +2,7 @@ package kr.kudong.common.basic.db;
 
 import org.bukkit.Bukkit;
 
-import kr.kudong.common.paper.config.ConfigurationMember;
+import kr.kudong.common.basic.config.ConfigurationMember;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
