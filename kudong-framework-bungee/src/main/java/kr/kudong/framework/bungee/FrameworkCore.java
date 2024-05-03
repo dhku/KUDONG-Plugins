@@ -6,7 +6,6 @@ import kr.kudong.common.basic.comm.ProtocolKey;
 import kr.kudong.common.basic.db.DBAccess;
 import kr.kudong.common.bungee.config.ConfigLoader;
 import kr.kudong.framework.bungee.comm.FrameworkMessageReceiver;
-import kr.kudong.framework.bungee.command.CommandManager;
 import kr.kudong.framework.bungee.db.SQLSchema;
 import kr.kudong.framework.bungee.listener.FrameworkCoreListener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -15,7 +14,6 @@ public class FrameworkCore extends Plugin
 {
 	private Logger logger;
 	private ConfigLoader configLoader;
-	private CommandManager commandManager;
 	@Override
 	public void onEnable()
 	{
@@ -23,8 +21,6 @@ public class FrameworkCore extends Plugin
 		this.configLoader = new ConfigLoader(this, this.logger);
 		
 		dbAccess = new DBAccess(logger);
-
-		this.commandManager = new CommandManager(this, logger, dbAccess);
 		this.registerPluginChannel();
 		this.registerConfig();
 		

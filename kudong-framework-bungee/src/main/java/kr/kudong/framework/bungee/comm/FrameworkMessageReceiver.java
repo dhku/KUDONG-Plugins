@@ -17,6 +17,7 @@ import com.google.common.io.ByteStreams;
 
 import kr.kudong.common.basic.comm.ProtocolKey;
 import kr.kudong.common.basic.util.AldarLocation;
+import kr.kudong.framework.bungee.db.NickNameQuery;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
@@ -64,10 +65,38 @@ public class FrameworkMessageReceiver implements Listener
 			case ProtocolKey.BROADCAST_PLAYER:
 				this.handleBroadcastMessage(msg);
 				break;  
+			case ProtocolKey.WHISPER_MESSAGE:
+				this.handleWhisperMessage(msg);
+				break;  
         }
 
 	}
 	
+	private void handleWhisperMessage(Message msg)
+	{
+		UUID base = UUID.fromString(msg.data.readUTF());
+		UUID target = UUID.fromString(msg.data.readUTF());
+		String whisperMsg = msg.data.readUTF();
+		
+		ProxiedPlayer p1 = ProxyServer.getInstance().getPlayer(base);
+		ProxiedPlayer p2 = ProxyServer.getInstance().getPlayer(target);
+		
+		NickNameQuery q = NickNameQuery.getQuery(base);
+		NickNameQuery q2 = NickNameQuery.getQuery(target);
+		
+		if(p2 == null)
+		{
+			BaseComponent ret = new TextComponent("§c해당 플레이어는 존재하지 않습니다.");
+			p1.sendMessage(ret);
+			return;
+		}
+		else
+		{
+			p1.sendMessage(new TextComponent("§6[§c나 §6-> §b"+q.getDisplayName()+"§6]§f" + whisperMsg));
+			p2.sendMessage(new TextComponent("§6[§b"+q2.getDisplayName()+" §6-> §c나§6]§f" + whisperMsg));	
+		}
+	}
+
 	private void handleBroadcastMessage(Message msg)
 	{
 		String type = msg.data.readUTF();

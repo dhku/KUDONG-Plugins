@@ -68,4 +68,28 @@ public class NickNameQuery
 		return q;
 	}
 	
+	public static NickNameQuery getQuery(UUID uuid)
+	{
+		NickNameQuery q = null;
+		try 
+		{
+			PreparedStatement ps = FrameworkCore.dbAccess.query(SQLSchema.NickNameTable_Select_Player);
+			ps.setString(1, uuid.toString());
+			ps.execute();
+			ResultSet rs = ps.getResultSet();
+			while (rs.next())
+			{
+				String ori = rs.getString(2);
+				String nic = rs.getString(3);
+				q = new NickNameQuery(uuid,ori,nic);
+			}
+			rs.close();
+		} 
+		catch (SQLException e1)
+		{
+			ProxyServer.getInstance().getLogger().log(Level.SEVERE, "SQLException 에러", e1);
+		}		
+		return q;
+	}
+	
 }

@@ -50,7 +50,7 @@ public class FrameworkCoreListener implements Listener
 			ResultSet rs = ps.getResultSet();
 			while (rs.next())
 			{
-				nickName = rs.getString(1);
+				nickName = rs.getString(3);
 			}
 			
 			rs.close();

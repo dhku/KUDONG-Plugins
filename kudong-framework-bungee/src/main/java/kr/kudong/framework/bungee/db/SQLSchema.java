@@ -14,6 +14,6 @@ public class SQLSchema
             "    PRIMARY KEY (playeruuid) USING BTREE\r\n" + 
             ") DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;";
 	
-	public static final String NickNameTable_Select_Player = "SELECT nickname FROM player_nickname_data where playeruuid = ?;";
+	public static final String NickNameTable_Select_Player = "SELECT * FROM player_nickname_data where playeruuid = ?;";
 	public static final String NickNameTable_Select_UUID = "SELECT * FROM player_nickname_data where nickname = ? OR originalname = ?;";
 }

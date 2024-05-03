@@ -23,6 +23,7 @@ import kr.kudong.framework.comm.FrameworkMessageReceiver;
 import kr.kudong.framework.command.BroadcastCommandManager;
 import kr.kudong.framework.command.FrameworkCommandManager;
 import kr.kudong.framework.command.ScoreboardCommandManager;
+import kr.kudong.framework.command.WhisperCommandManager;
 import kr.kudong.framework.controller.FrameworkConfig;
 import kr.kudong.framework.controller.FrameworkManager;
 import kr.kudong.framework.db.FrameworkPlayer;
@@ -43,6 +44,7 @@ public class FrameworkCore extends JavaPlugin
 	private ScoreboardCommandManager scoreboardCommandManager;
 	private FrameworkCommandManager frameworkCommandManager;
 	private BroadcastCommandManager broadcastCommandManager;
+	private WhisperCommandManager whisperCommandManager;
 	private FrameworkMessageReceiver comm;
 	private DBAccess dbAccess;
 	private ChatManager chatManager;
@@ -69,6 +71,7 @@ public class FrameworkCore extends JavaPlugin
 		this.scoreboardCommandManager = new ScoreboardCommandManager(this.logger, this);
 		this.frameworkCommandManager = new FrameworkCommandManager(this.logger, this , this.manager);
 		this.broadcastCommandManager = new BroadcastCommandManager(this.logger, this , this.manager);
+		this.whisperCommandManager = new WhisperCommandManager(this.logger, this , this.manager);
 		
 		this.scoreboardListener = new ScoreboardListener(this.logger, this);
 		this.chatManager = new ChatManager(this.logger, this);

@@ -205,7 +205,7 @@ public class NickNameListener implements Listener
 				event.setMessage("/op "+a);
 			}
 		}
-		else if(cmd.matches("/kudong move (.*)"))
+		else if(cmd.matches("/kudong move (.*)") || cmd.matches("/kd move (.*)"))
 		{
 			String[] args = cmd.split(" ");
 			if(args.length >= 3)
@@ -222,7 +222,7 @@ public class NickNameListener implements Listener
 				event.setMessage("/kudong move "+a+" "+format);
 			}
 		}
-		else if(cmd.matches("/kudong tp (.*)"))
+		else if(cmd.matches("/kudong tp (.*)") || cmd.matches("/kd tp (.*)"))
 		{
 			String[] args = cmd.split(" ");
 			if(args.length == 3)
@@ -237,6 +237,37 @@ public class NickNameListener implements Listener
 				event.setMessage("/kudong tp "+a+" "+b);
 			}
 		}
+		else if(cmd.matches("/ws (.*)") || cmd.matches("/귓 (.*)") || cmd.matches("/귓속말 (.*)"))
+		{
+			String[] args = cmd.split(" ");
+			if(args.length >= 2)
+			{
+				String a = findPlayerOriginalName(args[1]);
+				
+				StringBuilder s = new StringBuilder();
+				for(int i=2; i < args.length; i++)
+				{
+					s.append(args[i]);
+					s.append(" ");
+				}
+				
+				String format = s.toString();
+				
+				switch(args[0])
+				{
+					case "/ws":
+						event.setMessage("/ws "+a+" "+format);
+						break;
+					case "/귓":
+						event.setMessage("/귓 "+a+" "+format);
+						break;
+					case "/귓속말":
+						event.setMessage("/귓속말 "+a+" "+format);
+						break;
+				}
+			}
+		}
+
 	}
 	
 	/**

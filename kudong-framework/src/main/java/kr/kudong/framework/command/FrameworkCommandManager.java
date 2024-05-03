@@ -42,8 +42,11 @@ public class FrameworkCommandManager implements CommandExecutor
 	
 	public void printHelpMessage(Player player)
 	{
+		player.sendMessage("§aKUDONG-FRAMEWORK §f명령어 도움말");
+		player.sendMessage("========================================");
 		player.sendMessage("§e/kudong 또는 /kd 또는 /쿠동 으로 사용가능");
-		player.sendMessage("§e/kudong server §f<서버>");
+		player.sendMessage("§e/kudong server : 현재 서버를 확인합니다.");
+		player.sendMessage("§e/kudong server §f<서버> : 해당 서버로 이동합니다.");
 		player.sendMessage("§e/kudong move §f<player> <서버>");
 		player.sendMessage("§e/kudong move §f<player> <서버> <X> <Y> <Z> : world 기본월드로 전송");
 		player.sendMessage("§e/kudong move §f<player> <서버> <월드> <X> <Y> <Z>");
@@ -157,7 +160,7 @@ public class FrameworkCommandManager implements CommandExecutor
 				
 				if(args.length == 2)
 				{
-					this.connectServer(args[1]);
+					this.connectServer(player,args[1]);
 				}
 				else
 				{
@@ -223,7 +226,7 @@ public class FrameworkCommandManager implements CommandExecutor
 					}
 				}
 				
-				if(targetPlayerUUID == null || playerUUID == null)
+				if(targetPlayerUUID != null && playerUUID != null)
 					this.sendTeleportPlayer(playerUUID, targetPlayerUUID);
 				else
 					if(!isConsoleSender)this.printHelpMessage(player);
@@ -283,21 +286,13 @@ public class FrameworkCommandManager implements CommandExecutor
 		dummyPlayer.sendPluginMessage(this.plugin, ProtocolKey.BUNGEE_CHANNEL, out.toByteArray());
 	}
 	
-	public void connectServer(String server)
+	public void connectServer(Player player, String server)
 	{
-		Player dummyPlayer = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
-
-		if(dummyPlayer == null)
-		{
-			this.logger.log(Level.INFO,"최소 1명의 플레이어가 서버에 접속해있어야 패킷 전달이 가능합니다.");
-			return;
-		}
-
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out = ByteStreams.newDataOutput();
 		out.writeUTF("Connect");
 		out.writeUTF(server);
-		dummyPlayer.sendPluginMessage(this.plugin, ProtocolKey.BUNGEE_CHANNEL, out.toByteArray());
+		player.sendPluginMessage(this.plugin, ProtocolKey.BUNGEE_CHANNEL, out.toByteArray());
 	}
 	
 }

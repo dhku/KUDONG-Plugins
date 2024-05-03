@@ -13,3 +13,5 @@ commands:
       aliases: [쿠동,kd]
     bc:
       aliases: [방송]  
+    ws:
+      aliases: [귓,귓속말,rnlt]
