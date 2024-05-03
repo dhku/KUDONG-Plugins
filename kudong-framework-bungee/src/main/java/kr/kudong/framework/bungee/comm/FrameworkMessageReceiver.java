@@ -110,10 +110,12 @@ public class FrameworkMessageReceiver implements Listener
 			p1.sendMessage(ret);
 			return;
 		}
-			
-
-		ServerInfo base = p1.getServer().getInfo();
-		ServerInfo target = p2.getServer().getInfo();
+		
+		ServerInfo base = p1.getServer() != null ? p1.getServer().getInfo() : null;
+		ServerInfo target = p2.getServer() != null ? p2.getServer().getInfo() : null;
+		
+		if(base == null || target == null)
+			return;
 		
 		if(base.getName().equals(target.getName()))
 			return;
@@ -165,10 +167,8 @@ public class FrameworkMessageReceiver implements Listener
     	}
     	else
     	{
-    		this.logger.log(Level.INFO,"서버 <"+info.getName()+">가 존재하지않아 텔레포트 요청이 거부되었습니다.");
     		return false;
-    	}
-    		
+    	}	
     }
     
     
@@ -183,6 +183,12 @@ public class FrameworkMessageReceiver implements Listener
     	ProxiedPlayer p = event.getPlayer();
     	UUID uuid = p.getUniqueId();
     	
+    	String from = event.getFrom() != null ? event.getFrom().getName() : null;
+    	String to = p.getServer().getInfo().getName();
+    	
+    	if(from != null)
+    	this.logger.log(Level.INFO, "§b플레이어 <"+p.getDisplayName()+"> 서버이동 [ "+from +" => "+to+" ]");
+    	
     	//TeleportCoord
     	if(map.containsKey(p.getUniqueId()))
     	{
@@ -190,8 +196,8 @@ public class FrameworkMessageReceiver implements Listener
     		this.logger.log(Level.INFO,"ServerSwitchEvent");
     		ByteArrayDataOutput out = ByteStreams.newDataOutput();
     		out.writeUTF(ProtocolKey.TELEPORT_COORD);
-    		out.writeUTF(map.get(uuid));
-    		out.writeUTF(uuid.toString());
+    		out.writeUTF(map.get(uuid)); //Aldarlocation
+    		out.writeUTF(uuid.toString()); //Player uuid
             p.getServer().getInfo().sendData(ProtocolKey.MAIN_CHANNEL,out.toByteArray());
             map.remove(uuid);
     	}
@@ -200,8 +206,8 @@ public class FrameworkMessageReceiver implements Listener
     	{
     		ByteArrayDataOutput out = ByteStreams.newDataOutput();
     		out.writeUTF(ProtocolKey.TELEPORT_PLAYER);
-    		out.writeUTF(uuid.toString()); //base
-    		out.writeUTF(map2.get(uuid)); //target
+    		out.writeUTF(uuid.toString()); //base Player
+    		out.writeUTF(map2.get(uuid)); //target Player
             p.getServer().getInfo().sendData(ProtocolKey.MAIN_CHANNEL,out.toByteArray());
             map2.remove(uuid);
     	}
@@ -221,12 +227,11 @@ public class FrameworkMessageReceiver implements Listener
     	ProxiedPlayer player = ProxyServer.getInstance().getPlayer(UUID.fromString(id));
     	String senderServer = player.getServer().getInfo().getName();
     	
-    	this.logger.log(Level.INFO, "chatMsg relay>"+chatMsg);
+    	this.logger.log(Level.INFO, "채팅 중계>"+chatMsg);
     	
 		for(ServerInfo info : ProxyServer.getInstance().getServers().values())
 		{
 			if(senderServer.equals(info.getName())) continue;
-			this.logger.log(Level.INFO, "전송서버 = > "+info.getName());
 			this.sendChatMessage(info, id , name , chatMsg);
 		}
 	}
@@ -245,7 +250,6 @@ public class FrameworkMessageReceiver implements Listener
 	    ProxiedPlayer p = Iterables.getFirst(info.getPlayers(), null);
 	    if(p != null)
 	    {
-	    	this.logger.log(Level.INFO, "전송합니다");
 	    	p.getServer().getInfo().sendData( ProtocolKey.MAIN_CHANNEL , out.toByteArray());
 	    }
 	    else
@@ -257,16 +261,14 @@ public class FrameworkMessageReceiver implements Listener
 	@EventHandler
     public void on(PluginMessageEvent event)
     {
-    	
-	    this.logger.log(Level.INFO,"=====================");
-	    this.logger.log(Level.INFO,"CHANNEL => "+event.getTag());
-
         if (!event.getTag().equalsIgnoreCase( ProtocolKey.MAIN_CHANNEL)) return;
         ByteArrayDataInput in = ByteStreams.newDataInput( event.getData() );
         String key = in.readUTF();
         
-	    this.logger.log(Level.INFO,"KEY => "+key);
-	    this.logger.log(Level.INFO,"=====================");
+//	    this.logger.log(Level.INFO,"=====================");
+//	    this.logger.log(Level.INFO,"CHANNEL => "+event.getTag());
+//	    this.logger.log(Level.INFO,"KEY => "+key);
+//	    this.logger.log(Level.INFO,"=====================");
         
         Message msg = new Message(key,event.getReceiver(),in);
         this.receiveData(msg);

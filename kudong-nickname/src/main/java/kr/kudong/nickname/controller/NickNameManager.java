@@ -21,6 +21,7 @@ public class NickNameManager
 	private Logger logger;
 	private JavaPlugin plugin;
 	private DBAccess dbAccess;
+	private NickNameConfig config;
 	private NickNameListener listener;
 	private NickNameDBService service;
 	private Map<UUID,NickNamePlayer> map;
@@ -31,8 +32,14 @@ public class NickNameManager
 		this.plugin = plugin;
 		this.dbAccess = dbAccess;
 		this.map = new HashMap<>();
+		this.config = new NickNameConfig(this.logger, this);
 		this.listener = new NickNameListener(this.logger,this.plugin, this);
 		this.service = new NickNameDBService(this.logger, this.plugin, this.dbAccess);
+	}
+
+	public NickNameConfig getConfig()
+	{
+		return config;
 	}
 	
 	public void registerNickNamePlayer(UUID uuid,NickNamePlayer np)

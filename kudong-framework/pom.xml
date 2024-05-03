@@ -103,6 +103,22 @@
 						<goals>
 							<goal>shade</goal>
 						</goals>
+						<configuration>
+							<filters>
+								<filter>
+									<artifact>kr.kudong:kudong-common</artifact>
+									<includes>
+										<include>kr/kudong/common/basic/**</include>
+										<include>kr/kudong/common/paper/**</include>
+									</includes>
+								</filter>
+							</filters>
+							<artifactSet>
+								<includes>
+									<include>kr.kudong:kudong-common</include>
+								</includes>
+							</artifactSet>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

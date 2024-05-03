@@ -63,6 +63,7 @@
 									<artifact>kr.kudong:kudong-common</artifact>
 									<includes>
 										<include>kr/kudong/common/basic/**</include>
+										<include>kr/kudong/common/bungee/**</include>
 									</includes>
 								</filter>
 							</filters>

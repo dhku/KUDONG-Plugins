@@ -20,7 +20,8 @@ import com.google.common.io.ByteStreams;
 
 import kr.kudong.common.basic.comm.ProtocolKey;
 import kr.kudong.common.basic.util.AldarLocation;
-import kr.kudong.framework.chat.ChatConfig;
+import kr.kudong.common.paper.util.AldarLocationUtil;
+import kr.kudong.framework.controller.FrameworkConfig;
 import kr.kudong.framework.controller.FrameworkManager;
 
 public class FrameworkCommandManager implements CommandExecutor
@@ -38,6 +39,18 @@ public class FrameworkCommandManager implements CommandExecutor
 		this.cmd = this.plugin.getCommand("kudong");
 		this.cmd.setExecutor(this);
 	}
+	
+	public void printHelpMessage(Player player)
+	{
+		player.sendMessage("§e/kudong 또는 /kd 또는 /쿠동 으로 사용가능");
+		player.sendMessage("§e/kudong server §f<서버>");
+		player.sendMessage("§e/kudong move §f<player> <서버>");
+		player.sendMessage("§e/kudong move §f<player> <서버> <X> <Y> <Z> : world 기본월드로 전송");
+		player.sendMessage("§e/kudong move §f<player> <서버> <월드> <X> <Y> <Z>");
+		player.sendMessage("§e/kudong move §f<player> <서버> <월드> <X> <Y> <Z> <YAW> <PITCH>");
+		player.sendMessage("§e/kudong tp §f<target_player>");
+		player.sendMessage("§e/kudong tp §f<player> <target_player>");
+	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -53,18 +66,23 @@ public class FrameworkCommandManager implements CommandExecutor
 		{
 			player = (Player)sender;
 		}
-
-		if(args.length == 0)
+		
+		if(!isConsoleSender && !player.hasPermission("kudong.admin"))
 		{
-
+			player.sendMessage("§c해당 명령어를 사용할 권한이 없습니다.");
 			return true;
 		}
-		
-		if(ChatConfig.isBungeecord)
+			
+		if(args.length == 0)
+		{
+			if(!isConsoleSender)this.printHelpMessage(player);
+			return true;
+		}
+
+		if(FrameworkConfig.isBungeecord)
 		{
 			if((args[0].equalsIgnoreCase("move") || args[0].equalsIgnoreCase("이동")))
 			{
-
 					AldarLocation l = null;
 					
 					String username = args[1];
@@ -76,7 +94,7 @@ public class FrameworkCommandManager implements CommandExecutor
 						else this.logger.log(Level.INFO, "플레이어<"+username+">는 존재하지 않습니다!");
 						return true;
 					}
-					
+
 					try
 					{
 						// /kudong move <player> <서버>
@@ -108,10 +126,43 @@ public class FrameworkCommandManager implements CommandExecutor
 					}
 
 					if(l != null)
+					{
+						if(FrameworkConfig.server.equals(l.server))
+						{
+							Player pp = Bukkit.getPlayer(playeruuid);
+							if(pp != null) pp.teleport(AldarLocationUtil.toBukkitLocation(l));
+							return true;
+						}
 						this.sendTeleportCoordMessge(playeruuid ,username, l);
-
-				
+					}
+					else
+						if(!isConsoleSender)this.printHelpMessage(player);
 				return true;
+			}
+			
+			if((args[0].equalsIgnoreCase("server") || args[0].equalsIgnoreCase("서버")))
+			{
+				if(args.length == 1)
+				{
+					if(isConsoleSender) this.logger.log(Level.INFO, "현재서버는 <"+FrameworkConfig.server+"> 입니다.");
+					else player.sendMessage("현재서버는 <"+FrameworkConfig.server+"> 입니다.");
+					return true;
+				}
+				
+				if(isConsoleSender)
+				{
+					this.logger.log(Level.INFO, "해당 명령어는 콘솔에서 수행할수 없습니다.");
+					return true;
+				}
+				
+				if(args.length == 2)
+				{
+					this.connectServer(args[1]);
+				}
+				else
+				{
+					this.printHelpMessage(player);
+				}
 			}
 			
 			if((args[0].equalsIgnoreCase("tp") || args[0].equalsIgnoreCase("텔포")))
@@ -142,7 +193,7 @@ public class FrameworkCommandManager implements CommandExecutor
 					
 					if(pp != null)
 					{
-						player.sendMessage("§a["+pp.getDisplayName()+"]님에게 텔레포트 되었습니다.");
+						player.sendMessage("§6["+pp.getDisplayName()+"§6]님에게 텔레포트 되었습니다.");
 						player.teleport(pp.getLocation());
 						return true;
 					}
@@ -172,11 +223,13 @@ public class FrameworkCommandManager implements CommandExecutor
 					}
 				}
 				
-				this.sendTeleportPlayer(playerUUID, targetPlayerUUID);
-				
+				if(targetPlayerUUID == null || playerUUID == null)
+					this.sendTeleportPlayer(playerUUID, targetPlayerUUID);
+				else
+					if(!isConsoleSender)this.printHelpMessage(player);
+
 				return true;
 			}
-
 		}
 		else
 		{
@@ -227,6 +280,23 @@ public class FrameworkCommandManager implements CommandExecutor
 		out.writeUTF(username);
 		out.writeUTF(loc.server);
 		
+		dummyPlayer.sendPluginMessage(this.plugin, ProtocolKey.BUNGEE_CHANNEL, out.toByteArray());
+	}
+	
+	public void connectServer(String server)
+	{
+		Player dummyPlayer = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
+
+		if(dummyPlayer == null)
+		{
+			this.logger.log(Level.INFO,"최소 1명의 플레이어가 서버에 접속해있어야 패킷 전달이 가능합니다.");
+			return;
+		}
+
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out = ByteStreams.newDataOutput();
+		out.writeUTF("Connect");
+		out.writeUTF(server);
 		dummyPlayer.sendPluginMessage(this.plugin, ProtocolKey.BUNGEE_CHANNEL, out.toByteArray());
 	}
 	

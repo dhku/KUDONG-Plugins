@@ -1,4 +1,4 @@
-package kr.kudong.framework.chat;
+package kr.kudong.framework.controller;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -7,20 +7,22 @@ import java.util.logging.Logger;
 import com.google.gson.Gson;
 import com.google.gson.JsonParser;
 
-import kr.kudong.common.paper.config.ConfigurationMember;
+import kr.kudong.common.basic.config.ConfigurationMember;
+import kr.kudong.framework.chat.ChatManager;
 
-public class ChatConfig implements ConfigurationMember
+public class FrameworkConfig implements ConfigurationMember
 {
 	public static String format = "§f{name} §8» §f{message}";
+	public static String server = "lobby";
 	public static boolean isBungeecord = false;
 	
 	private final Logger logger;
 	private final JsonParser parser;
-	private final ChatManager manager;
+	private final FrameworkManager manager;
 	private final Gson gson; 
 	
 	
-	public ChatConfig(Logger logger, ChatManager manager)
+	public FrameworkConfig(Logger logger, FrameworkManager manager)
 	{
 		this.logger = logger;
 		this.manager = manager;
@@ -32,6 +34,7 @@ public class ChatConfig implements ConfigurationMember
 	public boolean installConfig(Map<String, Object> config)
 	{
 		format = config.getOrDefault("ChatFormat",format).toString();
+		server = config.getOrDefault("Server",server).toString();
 		isBungeecord = Boolean.valueOf(config.getOrDefault("isBungeecord","false").toString());
 		return true;
 	}
@@ -41,6 +44,7 @@ public class ChatConfig implements ConfigurationMember
 	{
 		Map<String, Object> map = new HashMap<>();
 		map.put("ChatFormat", format);
+		map.put("Server",server);
 		map.put("isBungeecord", isBungeecord);
 		return map;
 	}

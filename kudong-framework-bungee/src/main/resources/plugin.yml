@@ -5,6 +5,7 @@ description: ${description}
 main: kr.kudong.framework.bungee.FrameworkCore
 api-version: ${bukkit-api.version}
 commands:
-    aldarcommsend:
+    ws:
+        aliases: [귓,귓속말,rnlt]
         description: communication test
         usage: /aldarcommsend <target> [data]

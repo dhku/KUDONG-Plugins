@@ -14,6 +14,7 @@ import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import kr.kudong.framework.FrameworkCore;
 import kr.kudong.framework.scoreboard.TownyScoreboard;
 
 public class ScoreboardCommandManager implements CommandExecutor
@@ -38,6 +39,9 @@ public class ScoreboardCommandManager implements CommandExecutor
 	{
 		Player player = (Player) sender;
 		UUID uuid = player.getUniqueId();
+		
+		if(FrameworkCore.isTownyInstalled == false)
+			return true;
 		
 		if(args.length == 0)
 		{

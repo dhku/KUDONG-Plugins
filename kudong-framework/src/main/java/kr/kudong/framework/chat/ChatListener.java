@@ -14,6 +14,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import kr.kudong.common.basic.comm.ProtocolKey;
+import kr.kudong.framework.controller.FrameworkConfig;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 public class ChatListener implements Listener
@@ -34,7 +35,7 @@ public class ChatListener implements Listener
 	{
 		Player player = e.getPlayer();
 		
-    	String format = new String(ChatConfig.format);
+    	String format = new String(FrameworkConfig.format);
     	format = format.replace("{name}", player.getName());
     	format = format.replace("{message}", e.getMessage());
     	format = PlaceholderAPI.setPlaceholders(player, format);
@@ -42,7 +43,7 @@ public class ChatListener implements Listener
 		
     	e.setFormat(format);
     
-    	if(ChatConfig.isBungeecord)
+    	if(FrameworkConfig.isBungeecord)
     	{
         	//서버 -> 번지
     	    ByteArrayDataOutput out = ByteStreams.newDataOutput();

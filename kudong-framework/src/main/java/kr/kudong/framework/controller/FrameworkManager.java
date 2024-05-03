@@ -18,16 +18,22 @@ public class FrameworkManager
 	private final JavaPlugin plugin;
 	private final FrameworkDBService service;
 	private final FrameworkListener listener;
+	private FrameworkConfig config;
 	public final Map<UUID,FrameworkPlayer> map;
 	
 	public FrameworkManager(Logger logger, JavaPlugin plugin, DBAccess dbAccess)
 	{
 		this.logger = logger;
 		this.plugin = plugin;
-		
+		this.config = new FrameworkConfig(logger,this);
 		this.service = new FrameworkDBService(this.logger,this.plugin,dbAccess);
 		this.listener = new FrameworkListener(this.logger,this.plugin,this);
 		this.map = new HashMap<>();
+	}
+	
+	public FrameworkConfig getConfig()
+	{
+		return config;
 	}
 	
 	public UUID findPlayer(String name)

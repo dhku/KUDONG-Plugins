@@ -50,6 +50,7 @@ public class NickNameCore extends JavaPlugin
 		this.commandManager = new CommandManager(this.logger, this, this.nicknameManager);
 		this.listener = this.nicknameManager.getListener();
 
+		this.registerConfig();
 		this.registerEventListener();
 
 		this.dbAccess.simpleAsyncExecute(SQLSchema.NickNameTable);
@@ -57,6 +58,12 @@ public class NickNameCore extends JavaPlugin
 		
 		this.logger.log(Level.INFO, "Kudong-NickName 플러그인이 성공적으로 활성화 되었습니다!");
 
+	}
+	
+	private void registerConfig()
+	{
+		this.configLoader.registerModule("chat", this.nicknameManager.getConfig());
+		this.configLoader.loadConfig();
 	}
 
 	private void loadPlayerData()

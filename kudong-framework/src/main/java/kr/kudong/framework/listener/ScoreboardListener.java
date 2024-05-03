@@ -17,6 +17,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import kr.kudong.framework.FrameworkCore;
 import kr.kudong.framework.scoreboard.TownyScoreboard;
 import me.clip.placeholderapi.PlaceholderAPI;
 
@@ -35,6 +36,9 @@ public class ScoreboardListener implements Listener
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent e)
 	{
+		if(FrameworkCore.isTownyInstalled == false)
+			return;
+		
 		Player player = e.getPlayer();
 		UUID uuid = player.getUniqueId();
 		Bukkit.getScheduler().runTaskLater(plugin, ()->{

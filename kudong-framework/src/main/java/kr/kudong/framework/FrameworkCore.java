@@ -17,13 +17,13 @@ import com.google.common.io.ByteStreams;
 import kr.kudong.common.basic.comm.ProtocolKey;
 import kr.kudong.common.basic.db.DBAccess;
 import kr.kudong.common.paper.config.ConfigLoader;
-import kr.kudong.framework.chat.ChatConfig;
 import kr.kudong.framework.chat.ChatListener;
 import kr.kudong.framework.chat.ChatManager;
 import kr.kudong.framework.comm.FrameworkMessageReceiver;
 import kr.kudong.framework.command.BroadcastCommandManager;
 import kr.kudong.framework.command.FrameworkCommandManager;
 import kr.kudong.framework.command.ScoreboardCommandManager;
+import kr.kudong.framework.controller.FrameworkConfig;
 import kr.kudong.framework.controller.FrameworkManager;
 import kr.kudong.framework.db.FrameworkPlayer;
 import kr.kudong.framework.db.SQLSchema;
@@ -56,7 +56,7 @@ public class FrameworkCore extends JavaPlugin
 		
 		if(!this.setupEconomy()) return;
 		if(!this.setupPlaceHolder()) return;
-		
+		this.checkTowny();
 		/**
 		 * 디펜던시 로드
 		 */
@@ -97,7 +97,7 @@ public class FrameworkCore extends JavaPlugin
 
 	private void registerPluginChannel()
 	{
-		if(ChatConfig.isBungeecord)
+		if(FrameworkConfig.isBungeecord)
 		{
 			plugin.getServer().getMessenger().registerOutgoingPluginChannel(this, ProtocolKey.MAIN_CHANNEL);
 			plugin.getServer().getMessenger().registerIncomingPluginChannel(this, ProtocolKey.MAIN_CHANNEL, this.comm);
@@ -128,7 +128,7 @@ public class FrameworkCore extends JavaPlugin
 	
 	private void registerConfig()
 	{
-		this.configLoader.registerModule("chat", this.chatManager.getConfig());
+		this.configLoader.registerModule("framework", this.manager.getConfig());
 		this.configLoader.registerModule("database", this.dbAccess);
 		this.configLoader.loadConfig();
 	}
@@ -182,10 +182,19 @@ public class FrameworkCore extends JavaPlugin
 			}
 			
 		}, 0L, 20L);
-		
+	}
+	
+	
+	private void checkTowny()
+	{
+        if (getServer().getPluginManager().getPlugin("HQTowny") != null) 
+        {
+        	isTownyInstalled = true;
+        }
 	}
 	
 	public static JavaPlugin plugin;
 	public static Economy econ;
+	public static boolean isTownyInstalled = false;
 
 }

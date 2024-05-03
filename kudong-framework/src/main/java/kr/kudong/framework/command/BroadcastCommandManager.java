@@ -18,6 +18,7 @@ import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 
 import kr.kudong.common.basic.comm.ProtocolKey;
+import kr.kudong.framework.controller.FrameworkConfig;
 import kr.kudong.framework.controller.FrameworkManager;
 
 public class BroadcastCommandManager implements CommandExecutor
@@ -36,6 +37,11 @@ public class BroadcastCommandManager implements CommandExecutor
 		this.cmd.setExecutor(this);
 	}
 	
+	public void printHelpMessage(Player player)
+	{
+		player.sendMessage("§e/bc chat §f<할말> : 전체 공지를 방송합니다.");
+		player.sendMessage("§e/방송 채팅 §f<할말> : 전체 공지를 방송합니다.");
+	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -47,9 +53,15 @@ public class BroadcastCommandManager implements CommandExecutor
 			isConsoleSender = true;
 		else player = (Player)sender;
 
+		if(!isConsoleSender && !player.hasPermission("kudong.admin"))
+		{
+			player.sendMessage("§c해당 명령어를 사용할 권한이 없습니다.");
+			return true;
+		}
+		
 		if(args.length == 0)
 		{
-
+			if(!isConsoleSender)this.printHelpMessage(player);
 			return true;
 		}
 
@@ -65,7 +77,19 @@ public class BroadcastCommandManager implements CommandExecutor
 			
 			String format = s.toString();
 			
-			this.sendBroadcastPlayer("chat1",format);
+			if(FrameworkConfig.isBungeecord)
+				this.sendBroadcastPlayer("chat1",format);
+			else
+			{
+				for(Player p : Bukkit.getServer().getOnlinePlayers())
+				{
+					p.sendMessage("&l---------------------------");
+					p.sendMessage(" ");
+					p.sendMessage(" &6공지사항 &f: "+format);
+					p.sendMessage(" ");
+					p.sendMessage("&l---------------------------");
+				}
+			}
 			
 			if(isConsoleSender)
 			{
@@ -75,9 +99,11 @@ public class BroadcastCommandManager implements CommandExecutor
 				this.logger.log(Level.INFO," ");
 				this.logger.log(Level.INFO,"&l---------------------------");
 			}
-
+			
+			return true;
 		}
 		
+		if(!isConsoleSender)this.printHelpMessage(player);
 		return true;
 	}
 	

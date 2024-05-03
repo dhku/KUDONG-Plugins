@@ -12,6 +12,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import kr.kudong.nickname.controller.NickNameConfig;
 import kr.kudong.nickname.controller.NickNameManager;
 import kr.kudong.nickname.controller.NickNamePlayer;
 import kr.kudong.nickname.db.NickNameDBService;
@@ -36,6 +38,7 @@ public class NickNameListener implements Listener
 		UUID uuid = p.getUniqueId();
 		NickNameDBService service = this.manager.getService();
 		NickNamePlayer np = this.manager.getNickNamePlayer(uuid);
+		
 		if(np == null)
 		{
 			np = new NickNamePlayer(uuid,p.getName(),null,null);
@@ -54,10 +57,10 @@ public class NickNameListener implements Listener
 			this.manager.applyNickName(np);
 		}
 		
-		if(np.hasNickname())
-			event.setJoinMessage("[§2+§f] §b"+np.getNickName());
-		else
-			event.setJoinMessage("[§2+§f] §b"+np.getOriginalName());
+		String name = np.hasNickname() ? np.getNickName() : np.getOriginalName();
+		String format = NickNameConfig.joinMessage;
+		format = format.replace("{player}", name);
+		event.setJoinMessage(format);
 	}
 	
 	@EventHandler
@@ -69,10 +72,10 @@ public class NickNameListener implements Listener
 		{
 			NickNamePlayer np = this.manager.getNickNamePlayer(uuid);
 			
-			if(np.hasNickname())
-				event.setQuitMessage("[§4-§f]"+np.getNickName());
-			else
-				event.setQuitMessage("[§4-§f]"+np.getOriginalName());
+			String name = np.hasNickname() ? np.getNickName() : np.getOriginalName();
+			String format = NickNameConfig.quitMessage;
+			format = format.replace("{player}", name);
+			event.setQuitMessage(format);
 			
 			np.setBukkitPlayer(null);
 		}

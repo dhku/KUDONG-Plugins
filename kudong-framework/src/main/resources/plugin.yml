@@ -5,10 +5,11 @@ description: ${description}
 api-version: ${bukkit-api.version}
 main: kr.kudong.framework.FrameworkCore
 depend: [PlaceholderAPI]
+softdepend: [HQTowny]
 commands:
     scb:
       aliases: [스코어보드,스보] 
     kudong:
-      aliases: [쿠동]
+      aliases: [쿠동,kd]
     bc:
       aliases: [방송]  

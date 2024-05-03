@@ -12,7 +12,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import kr.kudong.common.paper.config.ConfigurationMember;
+import kr.kudong.common.basic.config.ConfigurationMember;
 import kr.kudong.entity.data.SteerablePreset;
 
 public class RidingConfig implements ConfigurationMember

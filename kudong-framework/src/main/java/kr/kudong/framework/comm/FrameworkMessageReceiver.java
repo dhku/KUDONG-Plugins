@@ -118,10 +118,10 @@ public class FrameworkMessageReceiver implements PluginMessageListener
 	    String key = in.readUTF();
 	    Message msg = new Message(key,player,in);
 	    
-	    this.logger.log(Level.INFO,"=====================");
-	    this.logger.log(Level.INFO,"CHANNEL => "+channel);
-	    this.logger.log(Level.INFO,"KEY => "+key);
-	    this.logger.log(Level.INFO,"=====================");
+//	    this.logger.log(Level.INFO,"=====================");
+//	    this.logger.log(Level.INFO,"CHANNEL => "+channel);
+//	    this.logger.log(Level.INFO,"KEY => "+key);
+//	    this.logger.log(Level.INFO,"=====================");
 	    
 	    switch(channel)
 		{
