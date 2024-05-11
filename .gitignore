@@ -1,9 +1,9 @@
 dependency-reduced-pom.xml
 
-kudong-nickname/src/
-kudong-framework/src/
-kudong-framework-bungee/src/
-kudong-entity-riding/src/
+kudong-nickname/**/*.java
+kudong-framework/**/*.java
+kudong-framework-bungee/v/*.java
+kudong-entity-riding/**/*.java
 
 .idea/
 .project
