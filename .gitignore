@@ -4,6 +4,7 @@ kudong-nickname/**/*.java
 kudong-framework/**/*.java
 kudong-framework-bungee/**/*.java
 kudong-entity-riding/**/*.java
+kudong-common/src/main/java/kr/kudong/common/basic/*.java
 
 .idea/
 .project
