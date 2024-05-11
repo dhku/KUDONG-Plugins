@@ -8,10 +8,12 @@ depend: [PlaceholderAPI]
 softdepend: [HQTowny]
 commands:
     scb:
-      aliases: [스코어보드,스보] 
+      aliases: [스코어보드,스보]
+    member:
+      aliases: [멤버,멤,apa] 
     kudong:
       aliases: [쿠동,kd]
     bc:
-      aliases: [방송]  
+      aliases: [공지]  
     ws:
       aliases: [귓,귓속말,rnlt]

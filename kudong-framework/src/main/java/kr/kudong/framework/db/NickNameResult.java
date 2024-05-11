@@ -1,4 +1,4 @@
-package kr.kudong.framework.bungee.db;
+package kr.kudong.framework.db;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -6,34 +6,23 @@ import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Level;
 
-import kr.kudong.framework.bungee.FrameworkCore;
-import net.md_5.bungee.api.ProxyServer;
+import org.bukkit.Bukkit;
 
-public class NickNameQuery
+import kr.kudong.framework.FrameworkCore;
+
+public class NickNameResult
 {
 	private UUID uuid;
 	private String original;
 	private String nickName;
-	private String alias;
 	
-	public NickNameQuery(UUID uuid,String original,String nickName,String alias)
+	public NickNameResult(UUID uuid,String original,String nickName)
 	{
 		this.uuid = uuid;
 		this.original = original;
 		this.nickName = nickName;
-		this.alias = alias;
 	}
-
-	public String getAlias()
-	{
-		return alias;
-	}
-
-	public void setAlias(String alias)
-	{
-		this.alias = alias;
-	}
-
+	
 	public UUID getUuid()
 	{
 		return uuid;
@@ -54,9 +43,9 @@ public class NickNameQuery
 		return this.nickName != null ? this.nickName : this.original;
 	}
 	
-	public static NickNameQuery getQuery(String nickName,String original)
+	public static NickNameResult sendQuery(String nickName,String original)
 	{
-		NickNameQuery q = null;
+		NickNameResult q = null;
 		try 
 		{
 			PreparedStatement ps = FrameworkCore.dbAccess.query(SQLSchema.NickNameTable_Select_UUID);
@@ -69,26 +58,25 @@ public class NickNameQuery
 				UUID uuid = UUID.fromString(rs.getString(1));
 				String ori = rs.getString(2);
 				String nic = rs.getString(3);
-				String alias = rs.getString(4);
-				q = new NickNameQuery(uuid,ori,nic,alias);
+				q = new NickNameResult(uuid,ori,nic);
 			}
 			rs.close();
 		} 
 		catch (SQLException e1)
 		{
-			ProxyServer.getInstance().getLogger().log(Level.SEVERE, "SQLException 에러", e1);
+			Bukkit.getServer().getLogger().log(Level.SEVERE, "SQLException 에러", e1);
 		}		
 		return q;
 	}
 	
-	public static NickNameQuery getQuery(String name)
+	public static NickNameResult sendQuery(String name)
 	{
-		return getQuery(name,name);
+		return sendQuery(name,name);
 	}
 	
-	public static NickNameQuery getQuery(UUID uuid)
+	public static NickNameResult sendQuery(UUID uuid)
 	{
-		NickNameQuery q = null;
+		NickNameResult q = null;
 		try 
 		{
 			PreparedStatement ps = FrameworkCore.dbAccess.query(SQLSchema.NickNameTable_Select_Player);
@@ -99,14 +87,13 @@ public class NickNameQuery
 			{
 				String ori = rs.getString(2);
 				String nic = rs.getString(3);
-				String alias = rs.getString(4);
-				q = new NickNameQuery(uuid,ori,nic,alias);
+				q = new NickNameResult(uuid,ori,nic);
 			}
 			rs.close();
 		} 
 		catch (SQLException e1)
 		{
-			ProxyServer.getInstance().getLogger().log(Level.SEVERE, "SQLException 에러", e1);
+			Bukkit.getServer().getLogger().log(Level.SEVERE, "SQLException 에러", e1);
 		}		
 		return q;
 	}

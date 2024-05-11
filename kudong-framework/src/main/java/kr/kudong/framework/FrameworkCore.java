@@ -1,6 +1,9 @@
 package kr.kudong.framework;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,13 +23,14 @@ import kr.kudong.common.paper.config.ConfigLoader;
 import kr.kudong.framework.chat.ChatListener;
 import kr.kudong.framework.chat.ChatManager;
 import kr.kudong.framework.comm.FrameworkMessageReceiver;
-import kr.kudong.framework.command.BroadcastCommandManager;
+import kr.kudong.framework.command.BroadcastCommand;
+import kr.kudong.framework.command.FrameworkCommand;
 import kr.kudong.framework.command.FrameworkCommandManager;
-import kr.kudong.framework.command.ScoreboardCommandManager;
-import kr.kudong.framework.command.WhisperCommandManager;
+import kr.kudong.framework.command.ScoreboardCommand;
+import kr.kudong.framework.command.WhisperCommand;
 import kr.kudong.framework.controller.FrameworkConfig;
 import kr.kudong.framework.controller.FrameworkManager;
-import kr.kudong.framework.db.FrameworkPlayer;
+import kr.kudong.framework.db.NickNameResult;
 import kr.kudong.framework.db.SQLSchema;
 import kr.kudong.framework.listener.ScoreboardListener;
 import kr.kudong.framework.reflection.ReflectionService;
@@ -41,12 +45,8 @@ public class FrameworkCore extends JavaPlugin
 	private ConfigLoader configLoader;
 	private ScoreboardListener scoreboardListener;
 	private PluginManager pluginManager;
-	private ScoreboardCommandManager scoreboardCommandManager;
-	private FrameworkCommandManager frameworkCommandManager;
-	private BroadcastCommandManager broadcastCommandManager;
-	private WhisperCommandManager whisperCommandManager;
+	private FrameworkCommandManager cmd;
 	private FrameworkMessageReceiver comm;
-	private DBAccess dbAccess;
 	private ChatManager chatManager;
 	private FrameworkManager manager;
 	
@@ -59,20 +59,17 @@ public class FrameworkCore extends JavaPlugin
 		if(!this.setupEconomy()) return;
 		if(!this.setupPlaceHolder()) return;
 		this.checkTowny();
+		
 		/**
 		 * 디펜던시 로드
 		 */
+		
 		this.logger = this.getLogger();
 		this.configLoader = new ConfigLoader(this, this.logger);
-		this.dbAccess = new DBAccess(logger);
+		dbAccess = new DBAccess(logger);
 		
-		this.manager = new FrameworkManager(this.logger, this, this.dbAccess);
-		
-		this.scoreboardCommandManager = new ScoreboardCommandManager(this.logger, this);
-		this.frameworkCommandManager = new FrameworkCommandManager(this.logger, this , this.manager);
-		this.broadcastCommandManager = new BroadcastCommandManager(this.logger, this , this.manager);
-		this.whisperCommandManager = new WhisperCommandManager(this.logger, this , this.manager);
-		
+		this.manager = new FrameworkManager(this.logger, this, dbAccess);
+		this.cmd = new FrameworkCommandManager(this.logger, this, this.manager);
 		this.scoreboardListener = new ScoreboardListener(this.logger, this);
 		this.chatManager = new ChatManager(this.logger, this);
 		
@@ -81,21 +78,12 @@ public class FrameworkCore extends JavaPlugin
 		this.registerConfig();
 		this.registerEventListener();
 		this.registerPluginChannel();
-		
-		this.dbAccess.start();
 		this.runScheduler();
 		
-		this.dbAccess.simpleAsyncExecute(SQLSchema.FrameworkPlayerTable);
-		this.loadPlayerData();
+		dbAccess.start();
+		dbAccess.simpleAsyncExecute(SQLSchema.NickNameTable);
 		
 		this.logger.log(Level.INFO, "Kudong-Framework 플러그인이 성공적으로 활성화 되었습니다!");
-	}
-	
-	private void loadPlayerData()
-	{
-		List<FrameworkPlayer> list = this.manager.getService().selectAllPlayer();
-		for(FrameworkPlayer p : list)
-			this.manager.map.put(p.getUuid(), p);
 	}
 
 	private void registerPluginChannel()
@@ -111,13 +99,13 @@ public class FrameworkCore extends JavaPlugin
 
 	public DBAccess getDBAccess()
 	{
-		return this.dbAccess;
+		return dbAccess;
 	}
 
 	@Override
 	public void onDisable()
 	{
-		this.dbAccess.stop();
+		dbAccess.stop();
 		this.logger.log(Level.INFO, "Kudong-Framework 플러그인이 성공적으로 비활성화 되었습니다!");
 	}
 	
@@ -132,7 +120,8 @@ public class FrameworkCore extends JavaPlugin
 	private void registerConfig()
 	{
 		this.configLoader.registerModule("framework", this.manager.getConfig());
-		this.configLoader.registerModule("database", this.dbAccess);
+		this.configLoader.registerModule("message", this.manager.getMsgConfig());
+		this.configLoader.registerModule("database", dbAccess);
 		this.configLoader.loadConfig();
 	}
 	
@@ -196,8 +185,14 @@ public class FrameworkCore extends JavaPlugin
         }
 	}
 	
+	public Map<UUID,NickNameResult> getJoinCacheMap()
+	{
+		return FrameworkManager.joinCache;
+	}
+	
 	public static JavaPlugin plugin;
 	public static Economy econ;
+	public static DBAccess dbAccess;
 	public static boolean isTownyInstalled = false;
-
+	
 }

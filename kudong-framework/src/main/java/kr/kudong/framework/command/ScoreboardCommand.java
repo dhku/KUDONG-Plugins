@@ -17,14 +17,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 import kr.kudong.framework.FrameworkCore;
 import kr.kudong.framework.scoreboard.TownyScoreboard;
 
-public class ScoreboardCommandManager implements CommandExecutor
+public class ScoreboardCommand implements CommandExecutor
 {
 	private final Logger logger;
 	private final JavaPlugin plugin;
 	private PluginCommand cmd;
 	private Map<UUID,Boolean> map = TownyScoreboard.map;
 	
-	public ScoreboardCommandManager(Logger logger,
+	public ScoreboardCommand(Logger logger,
 			JavaPlugin plugin)
 	{
 		this.logger = logger;

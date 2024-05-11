@@ -1,6 +1,7 @@
 package kr.kudong.nickname;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import kr.kudong.common.basic.db.DBAccess;
 import kr.kudong.common.paper.config.ConfigLoader;
 import kr.kudong.framework.FrameworkCore;
+import kr.kudong.framework.db.NickNameResult;
 import kr.kudong.nickname.command.CommandManager;
 import kr.kudong.nickname.controller.NickNameManager;
 import kr.kudong.nickname.controller.NickNamePlayer;
@@ -104,7 +106,16 @@ public class NickNameCore extends JavaPlugin
 
 		Plugin core = Bukkit.getPluginManager().getPlugin("Kudong-framework");
 		this.dbAccess = ((FrameworkCore)core).getDBAccess();
+		joinCache = ((FrameworkCore)core).getJoinCacheMap();
+		
 		return true;
 	}
+	
+	public static boolean hasJoinDBCache()
+	{
+		return joinCache == null ? false : true;
+	}
+	
+	public static Map<UUID,NickNameResult> joinCache = null;
 
 }

@@ -19,17 +19,19 @@ import com.google.common.io.ByteStreams;
 
 import kr.kudong.common.basic.comm.ProtocolKey;
 import kr.kudong.framework.controller.FrameworkManager;
+import kr.kudong.framework.db.NickNameResult;
+import kr.kudong.framework.task.PlayerWhisperTask;
 import net.md_5.bungee.api.chat.TextComponent;
 
 
-public class WhisperCommandManager implements CommandExecutor
+public class WhisperCommand implements CommandExecutor
 {
 	private final Logger logger;
 	private final JavaPlugin plugin;
 	private PluginCommand cmd;
 	private FrameworkManager manager;
 
-	public WhisperCommandManager(Logger logger, JavaPlugin plugin, FrameworkManager manager)
+	public WhisperCommand(Logger logger, JavaPlugin plugin, FrameworkManager manager)
 	{
 		this.logger = logger;
 		this.plugin = plugin;
@@ -62,53 +64,8 @@ public class WhisperCommandManager implements CommandExecutor
 
 		if(args.length > 1)
 		{
-			String target = args[0];
-
-			StringBuilder s = new StringBuilder();
-			for(int i = 1; i < args.length; i++)
-			{
-				s.append(args[i]);
-				s.append(" ");
-			}
-			String msg = s.toString();
-
-			UUID playeruuid = this.manager.findPlayer(target);
-
-			if(playeruuid != null)
-			{
-				if(playeruuid.equals(player.getUniqueId()))
-				{
-					player.sendMessage(new TextComponent("§c자신에게는 메세지를 보낼수 없습니다."));
-					return true;
-				}
-				this.sendWhisperMessage(player.getUniqueId(),playeruuid, msg);
-			}
-			else
-			{
-				player.sendMessage(new TextComponent("§c해당 플레이어는 존재하지 않습니다."));
-			}
+			Bukkit.getScheduler().runTaskAsynchronously(this.plugin,new PlayerWhisperTask(isConsoleSender, player, args, plugin));
 		}
 		return true;
 	}
-
-	private void sendWhisperMessage(UUID base, UUID target, String msg)
-	{
-		Player dummyPlayer = Iterables.getFirst(Bukkit.getOnlinePlayers(), null);
-
-		if(dummyPlayer == null)
-		{
-			this.logger.log(Level.INFO, "최소 1명의 플레이어가 서버에 접속해있어야 패킷 전달이 가능합니다.");
-			return;
-		}
-
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF(ProtocolKey.WHISPER_MESSAGE);
-		out.writeUTF(base.toString());
-		out.writeUTF(target.toString());
-		out.writeUTF(msg);
-
-		dummyPlayer.sendPluginMessage(this.plugin, ProtocolKey.MAIN_CHANNEL, out.toByteArray());
-
-	}
-
 }

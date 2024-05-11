@@ -41,9 +41,18 @@ public class FrameworkMessageReceiver implements PluginMessageListener
 			case ProtocolKey.TELEPORT_PLAYER:
 				this.handleTeleportPlayer(msg);
 				break;
+			case ProtocolKey.COMMAND_PLAYER:
+				this.handleCommandPlayer(msg);
+				break;
 		}
 	}
 	
+	private void handleCommandPlayer(Message msg)
+	{
+		String cmd = msg.data.readUTF();
+		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd);
+	}
+
 	private void handleTeleportPlayer(Message msg)
 	{
 		UUID base = UUID.fromString(msg.data.readUTF());

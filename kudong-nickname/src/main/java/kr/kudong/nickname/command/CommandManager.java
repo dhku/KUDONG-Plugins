@@ -271,6 +271,9 @@ public class CommandManager implements CommandExecutor
 						{
 							this.manager.applyNickName(np);
 							p.sendMessage("§a"+playerName+"님의 닉네임을 "+nickname+"(으)로 설정하였습니다.");
+							
+							
+							
 						}
 					});
 				}

@@ -3,6 +3,8 @@ package kr.kudong.framework.bungee.comm;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +20,10 @@ import com.google.common.io.ByteStreams;
 import kr.kudong.common.basic.comm.ProtocolKey;
 import kr.kudong.common.basic.util.AldarLocation;
 import kr.kudong.framework.bungee.db.NickNameQuery;
+import kr.kudong.framework.bungee.db.SQLSchema;
+import me.neznamy.tab.api.TabAPI;
+import me.neznamy.tab.api.TabPlayer;
+import me.neznamy.tab.api.event.player.PlayerLoadEvent;
 import net.md_5.bungee.api.Callback;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.ServerPing;
@@ -67,11 +73,88 @@ public class FrameworkMessageReceiver implements Listener
 				break;  
 			case ProtocolKey.WHISPER_MESSAGE:
 				this.handleWhisperMessage(msg);
-				break;  
+				break; 
+			case ProtocolKey.COMMAND_PLAYER:
+				this.handleCommandPlayer(msg);
+				break; 
+			case ProtocolKey.OPEN_PROXY_SERVER:
+				this.handleOpenProxyServer(msg);
+				break; 
+			case ProtocolKey.CLOSE_PROXY_SERVER:
+				this.handleCloseProxyServer(msg);
+				break; 
+			case ProtocolKey.TAB_RELOAD:
+				this.handleTabReload(msg);
+				break; 
         }
 
 	}
 	
+	private void handleTabReload(Message msg)
+	{
+		UUID sender = UUID.fromString(msg.data.readUTF());
+		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(sender);
+		ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), "btab reload");
+	}
+
+	private void handleCloseProxyServer(Message msg)
+	{
+		UUID sender = UUID.fromString(msg.data.readUTF());
+		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(sender);
+		
+		FrameworkConfig.isMaintenenceMode = true;
+		
+		BaseComponent ret = new TextComponent("§a서버가 메인테넌스 모드로 변경되었습니다. 이제부터 관리자만 접속 가능합니다.");
+		player.sendMessage(ret);
+	}
+
+	private void handleOpenProxyServer(Message msg)
+	{
+		UUID sender = UUID.fromString(msg.data.readUTF());
+		ProxiedPlayer player = ProxyServer.getInstance().getPlayer(sender);
+		
+		FrameworkConfig.isMaintenenceMode = false;
+		
+		BaseComponent ret = new TextComponent("§a메인테넌스 모드가 해제되었습니다. 이제부터 일반 플레이어도 접속 가능합니다.");
+		player.sendMessage(ret);
+	}
+
+	private void handleCommandPlayer(Message msg)
+	{
+		UUID sender = UUID.fromString(msg.data.readUTF());
+		String cmd = msg.data.readUTF();
+		
+    	ProxiedPlayer player = ProxyServer.getInstance().getPlayer(sender);
+    	String senderServer = player.getServer().getInfo().getName();
+
+		for(ServerInfo info : ProxyServer.getInstance().getServers().values())
+		{
+			if(senderServer.equals(info.getName())) continue;
+			//dispatch command... to server...
+			this.sendPlayerCommand(info, cmd);
+		}
+	}
+	
+	public void sendPlayerCommand(ServerInfo info, String cmd)
+	{
+	    Collection<ProxiedPlayer> networkPlayers = ProxyServer.getInstance().getPlayers();
+	    if ( networkPlayers == null || networkPlayers.isEmpty() ) return;
+	    
+	    ByteArrayDataOutput out = ByteStreams.newDataOutput();
+	    out.writeUTF( ProtocolKey.COMMAND_PLAYER ); 
+	    out.writeUTF( cmd ); 
+	    
+	    ProxiedPlayer p = Iterables.getFirst(info.getPlayers(), null);
+	    if(p != null)
+	    {
+	    	p.getServer().getInfo().sendData( ProtocolKey.MAIN_CHANNEL , out.toByteArray());
+	    }
+	    else
+	    {
+	    	info.sendData( ProtocolKey.MAIN_CHANNEL , out.toByteArray());
+	    }
+	}
+
 	private void handleWhisperMessage(Message msg)
 	{
 		UUID base = UUID.fromString(msg.data.readUTF());
@@ -92,20 +175,20 @@ public class FrameworkMessageReceiver implements Listener
 		}
 		else
 		{
-			p1.sendMessage(new TextComponent("§6[§c나 §6-> §b"+q.getDisplayName()+"§6]§f" + whisperMsg));
-			p2.sendMessage(new TextComponent("§6[§b"+q2.getDisplayName()+" §6-> §c나§6]§f" + whisperMsg));	
+			p1.sendMessage(new TextComponent("§6[§c나 §6-> §b"+q2.getDisplayName()+"§6]§f" + whisperMsg));
+			p2.sendMessage(new TextComponent("§6[§b"+q.getDisplayName()+" §6-> §c나§6]§f" + whisperMsg));	
 		}
 	}
 
 	private void handleBroadcastMessage(Message msg)
 	{
 		String type = msg.data.readUTF();
-		String format = msg.data.readUTF();
+		String content = msg.data.readUTF();
 		
 		if(type.equals("chat1"))
 		{
 			BaseComponent r1 = new TextComponent("§f§l---------------------------");
-			BaseComponent r2 = new TextComponent(" §6공지사항 §f: "+format);
+			BaseComponent r2 = new TextComponent(" §6공지사항 §f: "+content);
 			BaseComponent r3 = new TextComponent(" ");
 
 			for(ProxiedPlayer p :ProxyServer.getInstance().getPlayers())
@@ -118,7 +201,13 @@ public class FrameworkMessageReceiver implements Listener
 			}
 
 		}
-
+		else if(type.equals("whitelistkick"))
+		{
+			String format = "[§e=§f] §b{player}는 아직 인증을 받지않아 서버에서 나가졌습니다.";
+			format = format.replace("{player}", content);
+			BaseComponent r1 = new TextComponent(format);
+			ProxyServer.getInstance().broadcast(r1);
+		}
 	}
 
 	/**
@@ -199,8 +288,7 @@ public class FrameworkMessageReceiver implements Listener
     		return false;
     	}	
     }
-    
-    
+
 	/**
 	 * ServerSwitchEvnt : 플레이어가 마인크래프트 서버에 접속한후에 불립니다.
 	 * ServerSwitchEvnt에서 HashMap을 사용합니다.

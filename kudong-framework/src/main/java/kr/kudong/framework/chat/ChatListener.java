@@ -40,7 +40,8 @@ public class ChatListener implements Listener
     	format = format.replace("{message}", e.getMessage());
     	format = PlaceholderAPI.setPlaceholders(player, format);
     	format = format.replaceAll("&", "§");
-		
+    	format = format.replaceAll("%", "%%");
+    	
     	e.setFormat(format);
     
     	if(FrameworkConfig.isBungeecord)

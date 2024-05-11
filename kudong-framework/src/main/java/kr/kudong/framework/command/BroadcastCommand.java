@@ -21,14 +21,14 @@ import kr.kudong.common.basic.comm.ProtocolKey;
 import kr.kudong.framework.controller.FrameworkConfig;
 import kr.kudong.framework.controller.FrameworkManager;
 
-public class BroadcastCommandManager implements CommandExecutor
+public class BroadcastCommand implements CommandExecutor
 {
 	private final Logger logger;
 	private final JavaPlugin plugin;
 	private PluginCommand cmd;
 	private FrameworkManager manager;
 	
-	public BroadcastCommandManager(Logger logger, JavaPlugin plugin,FrameworkManager manager)
+	public BroadcastCommand(Logger logger, JavaPlugin plugin,FrameworkManager manager)
 	{
 		this.logger = logger;
 		this.plugin = plugin;
@@ -39,8 +39,8 @@ public class BroadcastCommandManager implements CommandExecutor
 	
 	public void printHelpMessage(Player player)
 	{
-		player.sendMessage("§e/bc chat §f<할말> : 전체 공지를 방송합니다.");
-		player.sendMessage("§e/방송 채팅 §f<할말> : 전체 공지를 방송합니다.");
+		player.sendMessage("§e/공지 §f<할말> : 전체 공지를 방송합니다.");
+		player.sendMessage("§e/bc §f<할말> : 전체 공지를 방송합니다.");
 	}
 	
 	@Override
@@ -53,7 +53,7 @@ public class BroadcastCommandManager implements CommandExecutor
 			isConsoleSender = true;
 		else player = (Player)sender;
 
-		if(!isConsoleSender && !player.hasPermission("kudong.admin"))
+		if(!isConsoleSender && (!player.hasPermission("kudong.broadcast") && !player.hasPermission("kudong.admin")))
 		{
 			player.sendMessage("§c해당 명령어를 사용할 권한이 없습니다.");
 			return true;
@@ -65,11 +65,11 @@ public class BroadcastCommandManager implements CommandExecutor
 			return true;
 		}
 
-		if((args[0].equalsIgnoreCase("chat") || args[0].equalsIgnoreCase("채팅")) && args.length >= 2)
+		if(args.length >= 1)
 		{
 			StringBuilder s = new StringBuilder();
 			
-			for(int i=1; i < args.length; i++)
+			for(int i=0; i < args.length; i++)
 			{
 				s.append(args[i]);
 				s.append(" ");
