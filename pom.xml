@@ -34,9 +34,8 @@
 		<protocolLib.version>4.5.1</protocolLib.version>
 		<postgresql.version>42.2.18</postgresql.version>
 		
-
 		<!-- 버킷 버전 -->    
-		<paper.version>1.16.1-R0.1-SNAPSHOT</paper.version>
+		<paper.version>1.20.4-R0.1-SNAPSHOT</paper.version>
 		<bukkit-api.version>1.20</bukkit-api.version>
 		<worldedit.version>7.1.0-SNAPSHOT</worldedit.version>
 		<dynmap.version>3.0-beta-10-spigot</dynmap.version>
@@ -66,7 +65,6 @@
 			<name>Minecraft Libraries</name>
 			<url>https://libraries.minecraft.net</url>
 		</repository>
-
 		<repository>
 			<id>bungeecord-repo</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>

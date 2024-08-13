@@ -32,14 +32,20 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        
+        <repository>
+		    <id>codemc-repo</id>
+		    <url>https://repo.codemc.io/repository/maven-public/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
+		
 		<dependency>
-			<groupId>com.destroystokyo.paper</groupId>
-			<artifactId>paper-api</artifactId>
-			<version>${paper.version}</version>
-			<scope>provided</scope>
+		    <groupId>io.papermc.paper</groupId>
+		    <artifactId>paper-api</artifactId>
+		    <version>${paper.version}</version>
+		    <scope>provided</scope>
 		</dependency>
 		
 		<dependency>
@@ -82,7 +88,13 @@
           <version>2.11.5</version>
          <scope>provided</scope>
         </dependency>
-		
+        
+        <dependency>
+		    <groupId>me.filoghost.chestcommands</groupId>
+		    <artifactId>chestcommands-api</artifactId>
+		    <version>4.0.4</version>
+		    <scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
